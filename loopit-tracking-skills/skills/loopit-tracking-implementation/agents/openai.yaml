@@ -1,0 +1,3 @@
+interface:
+  display_name: "loopit-tracking-implementation"
+  short_description: "Implement confirmed Loopit tracking plans"
