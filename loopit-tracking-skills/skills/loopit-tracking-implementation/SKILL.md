@@ -1,13 +1,13 @@
 ---
 name: loopit-tracking-implementation
-description: Implement confirmed Loopit TE tracking plans in RN, Native, H5, or backend code. Use when the user asks to落地埋点、接入埋点代码、补齐事件上报或把已确认方案接到实际采集链路。
+description: 根据已确认的 Loopit 埋点方案修改 RN、Native、H5 或服务端采集代码。用于落地埋点、接入埋点代码、补齐事件上报及字段映射，纯方案设计或只读验收按对应任务处理。
 metadata:
   short-description: Implement confirmed Loopit tracking plans
 ---
 
 # Loopit Tracking Implementation
 
-将已确认的 Loopit 埋点方案落到实际代码链路。默认只修改用户明确指定的代码仓库和文件范围，不写 TE 共享元数据、不修改生产配置、不把实现存在写成线上已收件。
+将已确认的 Loopit 埋点方案落到实际代码链路。先遵循目标仓库的适用规则，按用户授权范围修改代码，TE 共享元数据和生产配置按各自授权处理。
 
 ## 工作流程
 
@@ -21,7 +21,8 @@ metadata:
 ## 约束
 
 - 修改前保护用户已有 dirty 工作区，避免格式化和无关重构。
-- 事件名、属性名、类型和枚举以已确认方案为准。发现方案与现有代码冲突时停在差异说明和最小修正建议。
+- 事件名、属性名、类型和枚举以已确认方案为准。区分本次要修正的实现差异与需要产品决策的口径冲突，已获授权的实现差异直接修正，口径冲突先澄清。
+- 原账号归因、传输身份和 SDK 当前登录身份分别核实。保存原 uid 不授权把 SDK 切回旧账号补发。跨版本迁移字段时检查旧数据、旧客户端、报表依赖与切换条件。
 - 不把本地构建成功、SDK 接收或请求发出当作 TEA 收件证据。
 - 不自动补全 trace、订单键或全量上下文。只有指标确实需要且方案已确认时才接入。
 - 参考现有链路时读取 [rn-analytics.md](references/rn-analytics.md)。输出字段映射和验证状态时使用 [implementation-checklist.md](references/implementation-checklist.md)。

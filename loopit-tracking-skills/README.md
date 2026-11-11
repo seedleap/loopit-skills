@@ -12,23 +12,25 @@
 
 ## 命令行安装
 
-安装单个 Skill 时选择对应目录：
+需要 Node.js 和 npm。在目标工程目录运行以下命令，安装单个 Skill 到 Codex 的项目级目录：
 
-```text
-$skill-installer install https://github.com/seedleap/loopit-skills/tree/main/loopit-tracking-skills/skills/loopit-tracking-plan
+```sh
+npx skills add seedleap/loopit-skills --skill loopit-tracking-plan -a codex
 ```
 
-安装整条埋点链时，可使用 Codex 的 GitHub 安装脚本并重复传入 `--path`：
+一次安装三个埋点 Skill：
 
-```text
-python3 <codex-skill-installer>/install-skill-from-github.py \
-  --repo seedleap/loopit-skills \
-  --path loopit-tracking-skills/skills/loopit-tracking-plan \
-  --path loopit-tracking-skills/skills/loopit-tracking-implementation \
-  --path loopit-tracking-skills/skills/loopit-tracking-acceptance
+```sh
+npx skills add seedleap/loopit-skills \
+  --skill loopit-tracking-plan loopit-tracking-implementation loopit-tracking-acceptance \
+  -a codex
 ```
 
-正式使用时建议通过 `--ref` 固定发布 tag，避免直接跟随 `main` 的内容变化。
+加 `-g` 安装到用户级，供多个工程使用。先查看可安装技能可运行 `npx skills add seedleap/loopit-skills --list`。
+
+上述命令使用 [Vercel Skills CLI](https://github.com/vercel-labs/skills)。也可在 Codex 中要求内置 `$skill-installer` 安装具体目录链接，例如 `https://github.com/seedleap/loopit-skills/tree/main/loopit-tracking-skills/skills/loopit-tracking-plan`。
+
+安装 Skill 不包含 TEA 或飞书授权。方案 Skill 的连接和仓库位置配置见其 `references/workspace-config.md`。实现和验收可直接接收用户提供的方案、仓库、载荷和查询证据，缺失外部权限时保留相应未验证项。
 
 ## 开发约定
 
@@ -36,3 +38,7 @@ python3 <codex-skill-installer>/install-skill-from-github.py \
 - 方案、代码和验收之间通过明确的埋点契约传递，不能用上一个阶段的推测代替当前证据。
 - 真实凭据、个人工作区路径和生产数据不得提交到仓库。
 - 结构校验运行 `python3 tests/validate_structure.py`。
+
+## 验证范围
+
+结构测试检查每个独立安装单元的入口与本地引用文件。它不验证真实业务代码、设备运行态、TEA 收件或模型在新任务中的稳定性。新增的实现和验收 Skill 需要继续通过实际需求回放迭代。

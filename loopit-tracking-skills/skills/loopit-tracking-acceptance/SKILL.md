@@ -1,6 +1,6 @@
 ---
 name: loopit-tracking-acceptance
-description: Validate Loopit tracking implementations against confirmed plans using scenario checks, runtime payloads, TEA receipt evidence, and authoritative business outcomes. Use when the user asks for埋点自测、埋点验收、漏报重复、字段取值或 TEA 对账。
+description: 验收 Loopit 埋点实现与已确认方案是否一致，核对场景次数、运行载荷、TEA 收件和适用的业务终态。用于 Loopit 埋点自测、漏报重复排查、字段取值验收与 TEA 对账。
 metadata:
   short-description: Accept Loopit tracking implementations with evidence
 ---
@@ -15,7 +15,7 @@ metadata:
 2. **核对实现。** 回读代码触发点、字段来源、转换和发送路径，区分源码事实、静态检查和运行观察。方案与实现不一致时记录差异，不用实现反推方案已获批准。
 3. **执行场景。** 按真实用户路径执行最小覆盖，检查可见、点击、提交、返回、重进、重复操作、失败恢复和异步结果。需要设备时遵循当前设备授权和静音约定，保留场景截图或录屏证据。
 4. **对账载荷和收件。** 分别核对客户端最终 payload、TEA 服务收件和权威业务终态。按事件 ID 明细核查漏报和重复，只有聚合次数时只能给出聚合结论，不能声称逐条收件。
-5. **输出验收矩阵。** 每个场景给出通过、失败、阻塞或未验证状态，绑定预期次数、实际次数、关键字段、归因键、证据位置和缺口负责人。未拿到权威业务终态时，转化率和成功结论留空。
+5. **输出验收矩阵。** 每个场景给出通过、失败、阻塞或未验证状态，绑定预期次数、实际次数、关键字段、归因键、证据位置和缺口负责人。涉及交付、入账等业务成功指标时，缺少权威终态则相应成功结论和转化率留空。普通点击、曝光或页面到达按方案中的观察目标验收。
 
 ## 关键判断
 
