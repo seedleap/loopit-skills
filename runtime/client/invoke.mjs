@@ -11,7 +11,7 @@ export async function invoke(installation, { frontendError } = {}) {
     const current = await selection(ctx, { freeze: true, ...options });
     const worker = spawn(process.execPath, [path.join(current.resourcesRoot, 'scripts/runtime.mjs'), 'worker', ctx.root, current.invocationId], {
       detached: true, stdio: 'ignore', windowsHide: true,
-      env: { ...process.env, DISABLE_TELEMETRY: '1', DO_NOT_TRACK: '1' },
+      env: { ...process.env, DISABLE_TELEMETRY: '1', DO_NOT_TRACK: '1', GIT_TERMINAL_PROMPT: '0', GCM_INTERACTIVE: 'never' },
     });
     worker.on('error', () => {});
     worker.unref();

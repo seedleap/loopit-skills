@@ -4,6 +4,7 @@ import semver from 'semver';
 import { resolveSource, installSkills } from 'skills';
 import { contentHash, intact, readJson } from '../shared/content.mjs';
 import { writeJson } from '../shared/io.mjs';
+import { terminateProcessTree } from './process-tree.mjs';
 
 export function validateDescriptor(value, info) {
   if (value?.schema !== 1 || value.id !== info.id || !semver.valid(value.version)
@@ -18,9 +19,17 @@ export function validateDescriptor(value, info) {
 export async function stageUpdate({ info, currentVersion, staging }) {
   const base = process.env.LOOPIT_SKILLS_RELEASE_BASE_URL
     || `https://raw.githubusercontent.com/${info.repository}/${info.releaseBranch}/index`;
-  const response = await fetch(`${base.replace(/\/$/, '')}/${info.id}.json`, { signal: AbortSignal.timeout(15000), cache: 'no-store' });
+  let response, body;
+  try {
+    response = await fetch(`${base.replace(/\/$/, '')}/${info.id}.json`, { signal: AbortSignal.timeout(15000), cache: 'no-store' });
+    if (response.ok) body = await response.text();
+  }
+  catch (error) { throw Object.assign(new Error('release network unavailable'), { code: error.name === 'TimeoutError' ? 'NETWORK_TIMEOUT' : 'NETWORK_UNAVAILABLE' }); }
   if (!response.ok) throw Object.assign(new Error(`release lookup HTTP ${response.status}`), { code: response.status === 429 ? 'RATE_LIMITED' : 'RELEASE_UNAVAILABLE' });
-  const descriptor = validateDescriptor(await response.json(), info);
+  let value;
+  try { value = JSON.parse(body); }
+  catch { throw Object.assign(new Error('invalid release JSON'), { code: 'INVALID_DESCRIPTOR' }); }
+  const descriptor = validateDescriptor(value, info);
   if (!semver.gt(descriptor.version, currentVersion)) return { result: 'current', version: currentVersion };
   await writeJson(path.join(staging, 'pending.json'), { version: descriptor.version });
   const source = await resolveSource(info.repository, { ref: descriptor.tag });
@@ -49,8 +58,7 @@ export async function stageMain(inputFile) {
   const input = await readJson(inputFile);
   // A second deadline also bounds this process if its supervisor is interrupted.
   const deadline = setTimeout(() => {
-    if (process.platform !== 'win32') process.kill(-process.pid, 'SIGKILL');
-    else process.exit(124);
+    void terminateProcessTree(process.pid).then(() => process.exit(124), () => process.exit(124));
   }, input.timeoutMs + 3000);
   try {
     await mkdir(path.join(input.staging, 'tmp'), { recursive: true });

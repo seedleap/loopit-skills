@@ -92,7 +92,9 @@ test('corrupt download, offline, timeout and local changes retain the installed 
   assert.equal((await f.finish(receipt)).code, 'TIMEOUT');
   assert.equal((await readdir(receipt.statePath)).some(n => n.startsWith('staging-')), false);
   receipt = await f.invoke('a', [], { LOOPIT_SKILLS_RELEASE_BASE_URL: 'http://127.0.0.1:1' });
-  assert.equal((await f.finish(receipt)).result, 'failed');
+  const offline = await f.finish(receipt);
+  assert.equal(offline.result, 'failed');
+  assert.equal(offline.code, 'NETWORK_UNAVAILABLE');
   await writeFile(path.join(f.root('a'), 'references/rules.md'), 'user edit');
   receipt = await f.invoke();
   await waitFor(async () => (await json(path.join(receipt.statePath, 'last-check.json'))).code === 'LOCAL_MODIFIED');
