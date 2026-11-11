@@ -1,0 +1,3 @@
+interface:
+  display_name: "loopit-tracking-plan"
+  short_description: "Draft Loopit TE tracking plans from PRDs"

@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "id": "loopit-tracking-acceptance",
+  "version": "1.0.0",
+  "sourceCommit": "706bbd0e840201a9965c9894696165f18f52f1b6",
+  "packagePath": "skills/loopit-tracking-acceptance",
+  "tag": "skill/loopit-tracking-acceptance/v1.0.0",
+  "contentHash": "b88708edb2b4e016befdfd5159f0c41f99e5466780ccf699457bfe9e526acca8"
+}

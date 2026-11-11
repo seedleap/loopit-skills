@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "loopit-tracking-plan",
+  "version": "1.0.0",
+  "sourceCommit": "706bbd0e840201a9965c9894696165f18f52f1b6",
+  "packagePath": "skills/loopit-tracking-plan",
+  "tag": "skill/loopit-tracking-plan/v1.0.0",
+  "repository": "seedleap/loopit-skills",
+  "releaseBranch": "skill-releases",
+  "files": {
+    "LICENSE": "6421df275c95b36f48368920d40fcc4eaa1ad52704f70407efc5b25682137df9",
+    "SKILL.md": "6eb066c937fab623c75597d61daca7cca2dec5694c6b163bcd4eee7ad3cc249a",
+    "THIRD_PARTY_NOTICES.txt": "0489f06b44203f78f0746f5f1a52c0ba7df2d493cd69e3b0ffb3cef6b5afccc7",
+    "agents/openai.yaml": "8d9ae357ea2b32a654df3376487f1b645ed5af6df1d08d5b868cdf1ce9582d68",
+    "references/api.md": "27fc31ca49d710547cfec626199a1446e47409337db5334f754854feccd6a9ef",
+    "references/commerce-example.md": "d600877d46ea6ebdbeb3603fa086e284d711de7f6ac8434a6d01e42003e7ff2c",
+    "references/datareport-evidence.md": "fb4322607866f741283ed55bbab81b04e532cfc17b8b15d93069d485ecaad69a",
+    "references/examples.md": "8aa306ae06c0a457da206ae45b8b1cf3bf7ada331abc53c236a64d1323bfaad1",
+    "references/output-format.md": "9457385ac1b188ded75146594e266949bdaef2bfd1e60c2fa5bff69b4de99f05",
+    "references/rn-analytics.md": "bf526566789eea2a59e71f0032fc66a0910ff69ceee3e47bce43b5f04b455a30",
+    "references/source-docs.md": "7770a2d3ee82f4d465b83ca2eefed5a2829033b2b38430ef1e71df3c501e0854",
+    "references/workspace-config.md": "b9912b8c3be5a2a91b3915ce3d5ab670e5a987f0d8b1234f9ea7d448f16fe7b8",
+    "scripts/entry.mjs": "2fb47ed24c68718b1e862c352e6c382e58489d8c7581bb3f86b292172dacfb81",
+    "scripts/invoke.mjs": "7a80d9dbc1cf878c2b6fce26cdcbb645209330a84ab8e2d020a4d9c222144aed",
+    "scripts/runtime.mjs": "e7dbec1dc8902e85d24bfdb630dd74acb04406894eb51d8981172ce737afa53d",
+    "workflow.md": "b8a1d9dac32fc077dc77aeb00fb7f89296cbaabbcf2fdbcfb41bf2228174d679"
+  }
+}
