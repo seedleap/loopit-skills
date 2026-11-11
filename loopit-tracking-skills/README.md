@@ -12,23 +12,23 @@
 
 ## 命令行安装
 
-需要 Node.js 和 npm。在目标工程目录运行以下命令，安装单个 Skill 到 Codex 的项目级目录：
+需要 Node.js ≥22.20、npm 和 Git。在目标工程目录运行以下命令，从稳定发布分支安装单个 Skill 到 Codex 的项目级目录：
 
 ```sh
-npx skills add seedleap/loopit-skills --skill loopit-tracking-plan -a codex
+npx skills@1.8.1 add https://github.com/seedleap/loopit-skills/tree/skill-releases --skill loopit-tracking-plan -a codex
 ```
 
 一次安装三个埋点 Skill：
 
 ```sh
-npx skills add seedleap/loopit-skills \
+npx skills@1.8.1 add https://github.com/seedleap/loopit-skills/tree/skill-releases \
   --skill loopit-tracking-plan loopit-tracking-implementation loopit-tracking-acceptance \
   -a codex
 ```
 
-加 `-g` 安装到用户级，供多个工程使用。先查看可安装技能可运行 `npx skills add seedleap/loopit-skills --list`。
+加 `-g` 安装到用户级，供多个工程使用。先查看可安装技能可运行 `npx skills@1.8.1 add https://github.com/seedleap/loopit-skills/tree/skill-releases --list`。
 
-上述命令使用 [Vercel Skills CLI](https://github.com/vercel-labs/skills)。也可在 Codex 中要求内置 `$skill-installer` 安装具体目录链接，例如 `https://github.com/seedleap/loopit-skills/tree/main/loopit-tracking-skills/skills/loopit-tracking-plan`。
+上述命令使用 [Vercel Skills CLI](https://github.com/vercel-labs/skills)。也可在 Codex 中要求内置 `$skill-installer` 安装具体发布目录链接，例如 `https://github.com/seedleap/loopit-skills/tree/skill-releases/skills/loopit-tracking-plan`。旧版静态安装需覆盖安装一次，之后每次调用固定本地版本执行，后台只更新当前 Skill，完成后供后续调用使用，详见[自动更新规则](../README.md#安装与自动更新)。
 
 安装 Skill 不包含 TEA 或飞书授权。方案 Skill 的连接和仓库位置配置见其 `references/workspace-config.md`。实现和验收可直接接收用户提供的方案、仓库、载荷和查询证据，缺失外部权限时保留相应未验证项。
 

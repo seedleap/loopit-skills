@@ -1,0 +1,70 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fixture, git } from './helpers.mjs';
+import { publish } from '../publish/release.mjs';
+
+test('first-parent per-commit releases, contributor independence, historical packages and rerun idempotency', async t => {
+  const f = await fixture(t);
+  const run = () => publish({ repo: f.repo, sourceRef: 'main', repository: f.repository, push: true });
+  await run();
+  assert.equal((await f.descriptor('a')).version, '1.0.0');
+  await f.change('a', 'a first'); const c1 = await f.commit('A first', 'alice');
+  await f.change('b', 'b first'); await f.commit('B first', 'bob');
+  await f.change('a', 'a second'); await f.change('b', 'b second'); const c3 = await f.commit('A B');
+  await writeFile(path.join(f.repo, 'README.md'), 'unrelated documentation'); const docs = await f.commit('docs');
+  await git(f.repo, 'push', 'origin', 'main');
+  const result = await run();
+  assert.equal((await f.descriptor('a')).version, '1.0.2');
+  assert.equal((await f.descriptor('b')).version, '1.0.2');
+  assert.equal((await f.descriptor('c')).version, '1.0.0');
+  assert.equal((await f.descriptor('a')).sourceCommit, c3);
+  assert.equal(await git(f.remote, 'show', 'skill/a/v1.0.1:skills/a/references/rules.md'), 'a first');
+  assert.equal(await git(f.remote, 'show', 'skill/a/v1.0.2:skills/a/references/rules.md'), 'a second');
+  const oldInfo = JSON.parse(await git(f.remote, 'show', 'skill/a/v1.0.1:skills/a/.loopit-skill.json'));
+  assert.equal(oldInfo.sourceCommit, c1);
+  assert.equal(result.state.cursor, docs);
+  const before = await git(f.remote, 'rev-parse', 'skill-releases');
+  await run();
+  assert.equal(await git(f.remote, 'rev-parse', 'skill-releases'), before);
+  await publish({ repo: f.repo, sourceRef: c1, repository: f.repository, push: true });
+  assert.equal(await git(f.remote, 'rev-parse', 'skill-releases'), before);
+  assert.equal(await git(f.repo, 'status', '--porcelain'), '');
+});
+
+test('invalid skill is isolated, runtime changes fan out, and infrastructure failure is recoverable', async t => {
+  const f = await fixture(t);
+  const run = extra => publish({ repo: f.repo, sourceRef: 'main', repository: f.repository, push: true, ...extra });
+  await run();
+  await f.change('a', '[broken](missing.md)'); await f.change('b', 'good b');
+  await f.commit('invalid A valid B'); await run();
+  assert.equal((await f.descriptor('a')).version, '1.0.0');
+  assert.equal((await f.descriptor('b')).version, '1.0.1');
+  await f.change('a', 'fixed a'); await f.commit('fix A');
+  const before = await git(f.remote, 'rev-parse', 'skill-releases');
+  await assert.rejects(run({ beforePush: () => { throw new Error('infrastructure interrupted'); } }), /interrupted/);
+  assert.equal(await git(f.remote, 'rev-parse', 'skill-releases'), before);
+  await run();
+  assert.equal((await f.descriptor('a')).version, '1.0.1');
+  await writeFile(path.join(f.repo, 'runtime/client/entry.mjs'), `${await git(f.repo, 'show', 'HEAD:runtime/client/entry.mjs')}\n// client change\n`);
+  await f.commit('shared runtime'); await run();
+  assert.equal((await f.descriptor('a')).version, '1.0.2');
+  assert.equal((await f.descriptor('b')).version, '1.0.2');
+  assert.equal((await f.descriptor('c')).version, '1.0.1');
+});
+
+test('merge counts its first-parent result once, removed/renamed IDs preserve old stable artifacts', async t => {
+  const f = await fixture(t);
+  const run = () => publish({ repo: f.repo, sourceRef: 'main', repository: f.repository, push: true });
+  await run();
+  await git(f.repo, 'checkout', '-b', 'feature');
+  await f.change('a', 'feature one'); await f.commit('feature 1');
+  await f.change('a', 'feature two'); await f.commit('feature 2');
+  await git(f.repo, 'checkout', 'main');
+  await git(f.repo, 'merge', '--no-ff', 'feature', '-m', 'merge feature');
+  await run();
+  assert.equal((await f.descriptor('a')).version, '1.0.1');
+  await git(f.repo, 'rm', '-r', 'domain/skills/a'); await f.commit('remove A'); await run();
+  assert.equal((await f.descriptor('a')).version, '1.0.1');
+});
