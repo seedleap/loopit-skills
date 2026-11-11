@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "id": "loopit-tracking-plan",
-  "version": "1.0.0",
-  "sourceCommit": "706bbd0e840201a9965c9894696165f18f52f1b6",
+  "version": "1.0.1",
+  "sourceCommit": "d16241201f8ddd506682eec851604c3c5b177f61",
   "packagePath": "skills/loopit-tracking-plan",
-  "tag": "skill/loopit-tracking-plan/v1.0.0",
+  "tag": "skill/loopit-tracking-plan/v1.0.1",
   "repository": "seedleap/loopit-skills",
   "releaseBranch": "skill-releases",
   "files": {
@@ -21,8 +21,8 @@
     "references/source-docs.md": "7770a2d3ee82f4d465b83ca2eefed5a2829033b2b38430ef1e71df3c501e0854",
     "references/workspace-config.md": "b9912b8c3be5a2a91b3915ce3d5ab670e5a987f0d8b1234f9ea7d448f16fe7b8",
     "scripts/entry.mjs": "2fb47ed24c68718b1e862c352e6c382e58489d8c7581bb3f86b292172dacfb81",
-    "scripts/invoke.mjs": "7a80d9dbc1cf878c2b6fce26cdcbb645209330a84ab8e2d020a4d9c222144aed",
-    "scripts/runtime.mjs": "e7dbec1dc8902e85d24bfdb630dd74acb04406894eb51d8981172ce737afa53d",
+    "scripts/invoke.mjs": "63272e39b4dfe12ea51b931caf9ca724ca0321ed2f6a6cf8c2e764f42d9b8bcc",
+    "scripts/runtime.mjs": "cbbb675aeaa818509571e7636385a64495a2cea1afbeeef2f4c0c3926b5c6a11",
     "workflow.md": "b8a1d9dac32fc077dc77aeb00fb7f89296cbaabbcf2fdbcfb41bf2228174d679"
   }
 }

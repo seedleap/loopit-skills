@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "id": "loopit-tracking-acceptance",
-  "version": "1.0.0",
-  "sourceCommit": "706bbd0e840201a9965c9894696165f18f52f1b6",
+  "version": "1.0.1",
+  "sourceCommit": "d16241201f8ddd506682eec851604c3c5b177f61",
   "packagePath": "skills/loopit-tracking-acceptance",
-  "tag": "skill/loopit-tracking-acceptance/v1.0.0",
+  "tag": "skill/loopit-tracking-acceptance/v1.0.1",
   "repository": "seedleap/loopit-skills",
   "releaseBranch": "skill-releases",
   "files": {
@@ -15,8 +15,8 @@
     "references/acceptance-matrix.md": "5f3a77faf5f32d15b35269d320fcc486d505937021b47768d6bf0a89d0740493",
     "references/runtime-evidence.md": "1c05582eaec221baa0eddd8f1e1cd9bd01908b2d9179ab7ea158cced2fb9e6ac",
     "scripts/entry.mjs": "2fb47ed24c68718b1e862c352e6c382e58489d8c7581bb3f86b292172dacfb81",
-    "scripts/invoke.mjs": "7a80d9dbc1cf878c2b6fce26cdcbb645209330a84ab8e2d020a4d9c222144aed",
-    "scripts/runtime.mjs": "e7dbec1dc8902e85d24bfdb630dd74acb04406894eb51d8981172ce737afa53d",
+    "scripts/invoke.mjs": "63272e39b4dfe12ea51b931caf9ca724ca0321ed2f6a6cf8c2e764f42d9b8bcc",
+    "scripts/runtime.mjs": "cbbb675aeaa818509571e7636385a64495a2cea1afbeeef2f4c0c3926b5c6a11",
     "workflow.md": "64b2f0d33d6f43fc5c5caf9d6d675ffa38765023bdf04b6d783be0558f410293"
   }
 }
