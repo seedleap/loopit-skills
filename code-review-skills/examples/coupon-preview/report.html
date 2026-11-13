@@ -1,0 +1,305 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src &#x27;none&#x27;; style-src &#x27;sha256-BzTeSe8U47IbDlmyoZCyxuyw6KGbP2a+Znd0+3TgbD4=&#x27;; script-src &#x27;sha256-9YlmZm9vZOFxc1UWWnbTQyLn/eYWkiQwmbOt0wty1i8=&#x27;; img-src data:; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;"><title>优惠预览 · 审查报告示例</title><style>/* 配色、单列 panel、实际/预期与证据标签基于 plain-language/assets/h5-report-template.html；增加逐文件 diff 与折叠筛选。 */
+:root{color-scheme:light;--ink:#172033;--muted:#667085;--line:#d8dee9;--paper:#fff;--bg:#f4f6fa;--accent:#2457d6;--red:#b42318;--green:#087443;--danger-soft:#fff0ed;--ok-soft:#eaf8f0;--warn:#8a4b08;--warn-soft:#fff6dc}
+.actual,.expected{padding:10px 12px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.actual{color:var(--red);background:var(--danger-soft)}
+.expected{color:var(--green);background:var(--ok-soft)}
+.evidence-refs{color:var(--accent);background:#eaf0ff;padding:8px 12px;border-radius:8px}
+.evidence-label{display:inline-block;background:var(--warn-soft);color:var(--warn);padding:3px 10px;border-radius:99px;font-size:13px;font-weight:650}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:1.2rem}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+main{max-width:1440px;margin:0 auto;padding:32px 28px 72px}
+h1,h2,h3{line-height:1.35;overflow-wrap:anywhere}
+h1{font-size:30px;margin:.3rem 0 1rem}
+h2{font-size:23px;margin:0 0 20px}
+h3{font-size:20px}
+p{margin:.7rem 0}
+a{color:#165897;text-underline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #368be7;outline-offset:3px}
+button,input,select{font:inherit}
+button{cursor:pointer;border:1px solid #afc4db;background:#fff;border-radius:6px;color:var(--ink);padding:5px 11px}
+button:hover{background:#eaf2fa}
+input[type=search],select{border:1px solid #afc4db;border-radius:5px;padding:5px 7px;max-width:100%}
+code{font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
+section,.report-header{margin:0 0 24px;padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.eyebrow{color:var(--muted);font-size:13px;margin:0}
+.report-summary{white-space:pre-wrap}
+.summary-stats{display:flex;flex-wrap:wrap;gap:12px 20px;margin-top:20px;font-size:15px}
+.addition{color:var(--green);font-weight:650}
+.deletion{color:var(--red);font-weight:650}
+.draft-banner{position:sticky;top:0;z-index:10;border:2px solid #b0781c;background:#fff0cf;padding:12px 18px;border-radius:9px;margin-bottom:22px;font-weight:700}
+.field-grid{display:grid;grid-template-columns:150px minmax(0,1fr);gap:9px 16px;margin:18px 0}
+.field-grid dt{font-weight:650}
+.field-grid dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.boundary-note{border-left:4px solid #8ea9c8;padding:10px 15px;background:#f0f5fc;color:#344e6c}
+.issue-index{padding-left:1.3rem;margin:0}
+.issue-index li{padding:8px 0}
+.issue-index li>span{display:block;font-size:13px;color:var(--muted)}
+.priority{display:inline-block;background:#fff0e8;color:#8a4020;padding:1px 7px;border:1px solid #e0af91;border-radius:4px;font-size:13px;font-weight:700}
+.review-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:11px 15px;padding:15px;background:#edf3fa;border-radius:9px}
+.review-toolbar label{display:flex;align-items:center;gap:5px;font-size:14px}
+.review-toolbar input[type=search]{width:230px}
+#filter-result{color:var(--muted);font-size:13px}
+.interaction-status:empty{display:none}
+.interaction-status{font-size:13px;color:var(--muted)}
+.file-list{padding-left:30px;margin:20px 0}
+.file-item{padding-left:5px;margin:0 0 18px}
+.file-review{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+summary{cursor:pointer}
+summary::marker{color:var(--accent)}
+.file-summary{padding:16px 18px;list-style-position:inside}
+.file-summary:hover,.hunk-review>summary:hover{background:#f3f7fc}
+.file-primary{display:inline-flex;align-items:baseline;gap:10px;max-width:100%;vertical-align:top}
+.file-path{font-weight:650;overflow-wrap:anywhere;min-width:0}
+.bucket{flex:none;border:1px solid #92b8dd;color:#144d86;background:#e9f3ff;font-size:12px;border-radius:5px;padding:1px 7px;white-space:nowrap}
+.bucket-1{background:#eaf8ef;color:#24603a;border-color:#99caaa}
+.bucket-2{background:#fff3df;color:#815813;border-color:#d8bc80}
+.bucket-3{background:#f2ecff;color:#63428d;border-color:#bca9da}
+.bucket-4,.bucket-5{background:#f0f2f5;color:#54616d;border-color:#b9c2ca}
+.file-metrics{display:flex;flex-wrap:wrap;gap:7px 15px;padding-left:19px;margin-top:9px;color:var(--muted);font-size:13px}
+.status{border:1px solid #d2dce7;border-radius:4px;padding:0 5px}
+.problem-count{color:#9b3328;font-weight:650}
+.file-content{padding:0 22px 22px;border-top:1px solid #e8edf5}
+.review-fields{padding-left:24px;margin:18px 0}
+.review-fields li{padding:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.review-fields li>span{white-space:pre-wrap}
+.file-issues,.hunk-issues{padding:8px 0}
+.issue-ref{display:inline-block;border:1px solid #dbada8;background:#fff2f0;padding:0 6px;border-radius:4px;margin:0 4px 0 0}
+.patch-actions{display:flex;gap:10px;flex-wrap:wrap;padding-top:18px;border-top:1px solid var(--line)}
+.diff-legend{font-size:13px;color:var(--muted)}
+.diff-meta{padding:14px;background:#edf2f8;border:1px solid #d8e2ee;border-radius:7px;overflow:auto;white-space:pre;margin:16px 0}
+.hunk-review{margin:18px 0;border:1px solid #c9d8e9;border-radius:8px;overflow:hidden}
+.hunk-review>summary{padding:12px 14px;background:#edf4fc;font-weight:650}
+.anchor-label{font-size:12px;color:var(--muted);margin-left:12px;font-weight:400}
+.hunk-review .field-grid{padding:0 16px}
+.hunk-review .hunk-issues{padding:0 16px 10px}
+/* 非必要性只标记审查信息；原始 diff 的增删红绿、关键链路红字保持独立。 */
+.necessity-badge{display:inline-block;margin:6px 0 0 10px;padding:2px 7px;border-radius:5px;background:#eef2f6;color:#344054;font-size:13px;font-weight:650}
+.necessity-nonessential{background:#fff4cc;color:#805900;border:1px solid #d6b449}
+.hunk-review[data-necessity="冗余"],.hunk-review[data-necessity="过度改动"]{background:#fffbeb;border-color:#d6b449}
+.hunk-review[data-necessity="冗余"]>summary,.hunk-review[data-necessity="过度改动"]>summary,
+.hunk-review[data-necessity="冗余"]>summary:hover,.hunk-review[data-necessity="过度改动"]>summary:hover{background:#fff4cc}
+.hunk-review[data-necessity="冗余"]>.field-grid,.hunk-review[data-necessity="过度改动"]>.field-grid{background:#fffbeb;padding-top:12px;padding-bottom:12px}
+.diff-code{background:#0f1c2c;color:#e1ebf7;overflow:auto;margin:0;padding:10px 0;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;tab-size:4}
+.diff-code code{font:inherit;white-space:normal;display:block;width:max-content;min-width:100%}
+.diff-row{display:grid;grid-template-columns:55px 55px minmax(0,1fr);min-width:100%;white-space:pre}
+.diff-row .old-line,.diff-row .new-line{color:#a5b9d1;text-align:right;padding:0 9px;user-select:none;background:#ffffff03}
+.code-text{display:block;white-space:pre;padding:0 12px}
+.diff-row.added{background:#143f32;color:#def7e8}
+.diff-row.removed{background:#51232d;color:#ffe1e5}
+.diff-row.hunk-header{background:#21344f;color:#9ed3ff}
+.diff-row.metadata{color:#bcc8d7}
+.wrap-code .diff-code code{width:100%}
+.wrap-code .code-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.wrap-code .diff-meta{white-space:pre-wrap;overflow-wrap:anywhere}
+.issue-card{border:1px solid #d7b7ae;border-left:5px solid #ba6950;padding:18px 20px;border-radius:9px;margin:20px 0;background:#fffdfb}
+.issue-card.priority-P0,.issue-card.priority-P1{border-left-color:#bd4135}
+.issue-card h3{margin-top:0}
+.evidence-label{color:#6a503f;font-size:14px}
+.location-links{overflow-wrap:anywhere}
+.repro{border-top:1px solid #dfd4cf;margin-top:20px;padding-top:14px}
+.repro>summary{font-weight:650}
+.repro-type{font-size:12px;padding:2px 7px;margin-left:9px;border-radius:4px}
+.repro-type.candidate{color:#805b18;background:#fff0cd}
+.repro-type.executed{color:#21603c;background:#e3f6e9}
+.repro-steps{padding-left:26px}
+.repro-steps li{padding:5px 0;white-space:pre-wrap}
+.table-scroll{overflow:auto}
+table{border-collapse:collapse;min-width:700px;width:100%;font-size:15px}
+th,td{border:1px solid #d8e1eb;padding:10px 12px;text-align:left;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}
+th{background:#edf3fa;font-weight:650}
+tbody tr:nth-child(even){background:#f8fafc}
+.matrix-section{padding:22px}
+footer{font-size:12px;color:var(--muted);padding:6px 4px;overflow-wrap:anywhere}
+.skip-link{position:absolute;top:-70px;left:20px;padding:10px;background:#fff;z-index:30}
+.skip-link:focus{top:10px}
+[hidden]{display:none!important}
+.baseline{margin:0 0 24px;padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.baseline-title{font-size:18px}
+.overall-item{margin-top:22px;padding:18px 20px;border-top:2px solid var(--line);background:#f7faff}
+.code-cell{display:flex;align-items:flex-start;min-width:0}
+.code-cell .code-text{flex:1;min-width:0}
+.diff-row.is-focus{box-shadow:inset 4px 0 0 #e11d48;background-image:linear-gradient(#e11d481a,#e11d481a)}
+.focus-markers{display:inline-flex;gap:3px;flex:none;padding-left:7px}
+.evidence-marker{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;margin-top:0;color:#fff;background:#e11d48;border:1px solid #ffd7e2;border-radius:50%;font:700 12px/1 sans-serif;user-select:none}
+.focus-explanations{padding:0 18px 0 40px;white-space:pre-wrap;overflow-wrap:anywhere}
+.focus-explanations li{padding:5px 0}
+@media(max-width:720px){main{padding:18px 10px 42px}
+section,.report-header{padding:18px 14px}
+h1{font-size:25px}
+h2{font-size:21px}
+.field-grid{grid-template-columns:1fr;gap:3px}
+.field-grid dd{margin-bottom:10px}
+.file-list{padding-left:23px}
+.file-summary{padding:13px 10px}
+.file-primary{display:inline;word-break:break-word}
+.bucket{margin-right:6px}
+.file-content{padding:0 12px 16px}
+.review-toolbar{padding:12px}
+.review-toolbar input[type=search]{width:180px}
+.diff-row{grid-template-columns:40px 40px minmax(0,1fr)}
+.diff-row .old-line,.diff-row .new-line{padding:0 5px}
+.code-text{padding:0 7px}
+.issue-card{padding:16px 12px}
+}
+@media print{body{background:#fff}
+main{padding:0;max-width:none}
+button,.review-toolbar,.patch-actions,.skip-link{display:none!important}
+section,.report-header,.file-review,.issue-card{break-inside:avoid;border-radius:0}
+.diff-code{font-size:10px}
+.table-scroll{overflow:visible}
+table{min-width:0;font-size:15px}
+th,td{padding:5px}
+a{color:inherit}
+.draft-banner{position:static}
+}
+
+/* 测试采用紧凑摘要，主审查区域保持业务代码优先。 */
+.file-group{margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.file-group h3{margin:0 0 8px}
+.group-stats,.group-note{color:var(--muted);font-size:14px;margin:5px 0}
+#test-files .file-item{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:10px}
+#test-files .file-item>.file-summary{padding:0;font-size:14px}
+#test-files .file-item>.field-grid{grid-template-columns:90px minmax(0,1fr);font-size:13px;gap:4px 10px;margin:8px 0}
+#test-files .file-item>.file-review{border:0;border-top:1px solid var(--line);border-radius:0}
+#test-files .file-review>.file-summary{font-size:13px;padding:8px 0}
+@media(max-width:680px){#test-files .file-item>.field-grid{grid-template-columns:1fr}}
+
+/* 独立目标逐项编号，避免多个目标连成难以核对的长段落。 */
+.goal-list{margin:0;padding-left:1.6em}
+.goal-list li{white-space:pre-wrap;overflow-wrap:anywhere}
+.goal-list li+li{margin-top:8px}
+/* 文件头以文件为边界吸顶，代码容器独立横滚。 */
+.file-review,.hunk-review{overflow:visible}
+.file-review>.file-summary,.file-item>div.file-summary{position:sticky;top:var(--relation-header-height,0px);z-index:8;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 3px 9px #17203312}
+.file-item>div.file-summary{padding:12px}
+.file-item[data-bucket="测试"]>.file-review>.file-summary{position:static}
+.file-primary{display:flex;min-width:0;align-items:flex-start}
+.file-path{display:block;word-break:break-word}.file-name{display:block;font-size:16px}.full-path{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;color:#667085;font-weight:400}
+.file-metrics{padding-left:0;gap:5px 12px;align-items:center}
+.title-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;font-size:13px}
+.scope-badge,.risk-badge,.scope-warning{display:inline-block;border-radius:5px;padding:2px 7px;font-size:13px;font-weight:650}
+.scope-badge{color:#344054;background:#eef2f6;border:1px solid #ccd5e0}
+.risk-low{color:#087443;background:#eaf8f0}.risk-medium{color:#805900;background:#fff4cc}.risk-high{color:#a34400;background:#fff0de}.risk-very-high{color:#b42318;background:#ffebe8}
+.critical-title,.critical-title:visited,.critical-alert{color:#b42318!important;font-weight:750}
+.critical-alert{display:block;font-size:13px}
+.scope-warning{color:#8a4000;background:#ffebc6}
+.delta{color:#344054}.risk-reason{font-size:14px;color:#475467;margin:10px 14px}
+.risk-detail{padding:8px 14px;background:#f8fafc;font-size:14px}.risk-detail .matrix-section{margin:8px 0;padding:8px;border:0}
+.risk-detail table{font-size:13px;min-width:760px}.risk-detail h2{font-size:16px;margin:8px 0}
+.jump-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.jump-nav a{padding:6px 9px;border:1px solid #c0cde0;border-radius:6px;background:#fff;font-size:14px;text-decoration:none}
+.snapshot-details,.risk-method{margin:18px 0;padding:14px;background:#fff;border:1px solid var(--line);border-radius:8px}
+.snapshot-details>summary,.risk-method>summary{font-weight:650}.compact-overview{font-size:17px}
+.review-toolbar{margin:18px 0}.commit-section,.file-group,.file-item,.file-content{min-width:0}
+.change-relation,.change-step{min-width:0}.change-relation{margin:22px 0;padding:16px;border:1px solid var(--line);border-left:4px solid #416fb2;border-radius:8px}.change-relation>h3{font-size:21px}.change-kind{display:inline-block;padding:2px 8px;margin-right:8px;border:1px solid #b8c9e0;border-radius:5px;background:#edf3fc;color:#244c80;font-size:14px}.change-step{margin-top:20px;padding-top:12px;border-top:1px solid var(--line)}.change-step>h4{font-size:17px;overflow-wrap:anywhere}.relation-status{font-weight:550}.relation-origin{color:#52627a}
+.commit-section>h2{font-size:22px}.follow-up{border-left:3px solid #8198ba;background:#f1f5fb;padding:9px 13px;font-size:14px}
+.change-relation>h3{position:sticky;top:0;z-index:9;background:#fff;padding:10px 0;margin-top:0;box-shadow:0 3px 9px #17203312;overflow-wrap:anywhere}
+.file-item [id]{scroll-margin-top:calc(var(--file-header-height,180px) + var(--relation-header-height,0px))}
+#focus-review,.inline-evidence,.issue-evidence{min-width:0;overflow-wrap:anywhere}
+.inline-evidence figure,#focus-review figure,.issue-evidence figure{max-width:100%;margin:12px 0;overflow-x:auto}
+.inline-evidence img,#focus-review img,.issue-evidence img{display:block;max-width:100%;height:auto}
+.inline-evidence figcaption,#focus-review figcaption,.issue-evidence figcaption{font-size:14px;color:#475467;overflow-wrap:anywhere}
+.inline-evidence pre,#focus-review pre{max-width:100%;overflow:auto;white-space:pre}
+.hunk-review>.risk-detail{border-top:1px solid var(--line)}
+.diff-code{max-width:100%}.hunk-title{font-size:17px}
+.proof{padding:14px;border:1px solid var(--line);border-radius:8px;margin:14px 0}.proof pre{overflow:auto;background:#142038;color:#e2eaf9;padding:12px}.proof pre span{white-space:pre}.proof .line,.proof .focus{display:block}.proof .focus{background:#334765;border-left:3px solid #fbc558}.proof .ln{display:inline-block;width:4em;color:#afc4e8}.issue-evidence{margin-top:16px}
+@media(max-width:720px){.compact-overview{font-size:14px}.file-summary{padding:10px 8px}.file-metrics{font-size:12px;gap:4px 8px}.scope-badge,.risk-badge,.scope-warning{font-size:12px}.critical-alert{font-size:12px}.commit-section{padding:14px 8px}.file-list{padding-left:18px}.file-content{padding:0 7px 12px}.risk-detail{padding:7px}.hunk-title{font-size:15px}}
+</style></head><body><main>
+<header class="report-header"><h1>优惠预览 · 审查报告示例</h1><p class="compact-overview">feature/coupon-preview → 冻结示例基线 · <span class="addition">+4</span> / <span class="deletion">−3</span> 行</p><h2>结论</h2><p>❌ 示例存在一处百分比换算错误；修正后补验 0%、10%、100%。以下均为虚构代码的报告演示。</p></header>
+<section id="focus-review"><h2>👤 给人看的 · 分支改动、测试关注与行动</h2><h3>本次改动与通过标准</h3><p>改前：只展示商品小计。改后：支持优惠比例，并显示“优惠后金额预览”。</p><p>✅ 文案范围清楚（代码层）。❌ 金额计算问题见下方唯一 P1 主卡。</p><p>⚠️ 开发修正百分比换算；测试核对 2 × 50、优惠 10% 应为 90，0% 为 100，100% 为 0。界面与真实业务未验。</p><p>读者动作：开发处理 P1；AI 展开底稿核对全部文件、必要性与原始 diff。</p><p><strong>示例说明：</strong>本页由正式生成器渲染；虚构隔离代码，非业务验收。</p></section>
+<section id="issues"><h2>确认问题 · 优先审查</h2>
+<article class="issue-card priority-P2" id="final-issue-P1"><h3><span class="priority">P2</span> P1 · 优惠 10% 时，预览金额变为负数</h3><p class="evidence-label">证据等级：代码实锤 · 发生频率：频率待确认</p><p class="location-links">位置：<a data-open-target href="#final-file-F002">src/quote.js:4 · quote</a></p><p>对应代码块：<a data-open-target href="#final-hunk-F002-H01">F002-H01</a></p><dl class="field-grid"><dt>用户表现</dt><dd>样例读者输入 2 件、单价 50、优惠 10%，预览算式给出 −900。</dd><dt>用户影响</dt><dd>样例金额预览错误；无真实支付或生产数据</dd><dt>影响范围</dt><dd>仅此虚构报价样例</dd></dl><details class="repro" data-review-expand open><summary>用户复现路径 <span class="repro-type candidate">候选复现路径/待验证</span></summary><dl class="field-grid"><dt>用户画像</dt><dd>虚构预览页读者</dd><dt>前置条件</dt><dd>仅为样例；无真实业务界面</dd></dl><ol class="repro-steps"><li>输入数量 2、单价 50、优惠 10%</li><li>观察预览金额</li></ol><p class="actual"><strong>实际结果/推导结果：</strong>按代码计算为 −900</p><p class="expected"><strong>预期结果：</strong>应为 90</p><dl class="field-grid"><dt>可达条件/关键原因</dt><dd>输入以百分数表示，计算却直接从 1 减去 10，少了 /100。</dd></dl><div class="inline-evidence"><article class="proof"><strong>E1 · 示例目标源码 / 关键行（非 diff）</strong><pre><span class="line">3  const subtotal = quantity * unitPrice;</span><span class="focus">4  return subtotal * (1 - discountPercent);</span></pre><p>① 2 × 50 × (1 − 10) = −900；预期 2 × 50 × (1 − 10/100) = 90。</p><a href="#final-hunk-F002-H01" data-open-target>展开原始代码块与逐项判断</a></article></div><dl class="field-grid"><dt>破坏的不变量</dt><dd>有效优惠比例下，预览金额应在 0 与原小计之间</dd><dt>确认状态</dt><dd>代码实锤 / 频率待确认 / 只核对代码，界面未执行</dd><dt>可恢复性</dt><dd>修正算式并重新预览</dd><dt>最小修正建议</dt><dd>将比例换算为 discountPercent / 100，核对 0%、10%、100%。</dd><dt>证据边界</dt><dd>不代表设备、后台或真实项目验收</dd></dl><p class="evidence-refs"><strong>证据编号：</strong>E1：冻结示例 src/quote.js:4</p><p><strong>观察点</strong></p><ul><li>预览金额与百分比换算</li></ul></details></article>
+</section>
+<details id="full-review" class="snapshot-details"><summary>🤖 给 AI 二次复核 · 人工按需查证 · 2 个文件 / 2 个代码块 · 完整判断与原始 diff</summary><p>人工通常不必逐项阅读。AI 请逐块核对需求关联、独立必要性、原行为、消费者、反例与证据，不能只复述已有结论；人工质疑或抽检时查对应材料。</p>
+<nav class="jump-nav"><a href="#issues">确认问题</a><a data-open-target href="#relation-R1">R1 · 需求 · 优惠后金额预览</a><a href="#final-diff">最终完整 diff</a></nav>
+<details class="snapshot-details"><summary>审查快照身份</summary><dl class="field-grid"><dt>HEAD</dt><dd>62a0c0e8e78e71a23f102ebb7f4239015a0a5a47</dd><dt>对比基线</dt><dd>62a0c0e8e78e71a23f102ebb7f4239015a0a5a47</dd><dt>快照时间</dt><dd>2026-11-13T00:00:00+00:00</dd><dt>指纹</dt><dd>caf77d930a198c464910a1b1e8efbb15dbd0aa3be647f5fdb1e69829a7bd3b36</dd></dl><dl class="field-grid"><dt>独立目标</dt><dd><ol class="goal-list"><li>增加优惠比例的金额预览</li><li>让预览文案明确区别于支付结果</li></ol></dd></dl></details>
+<div class="review-toolbar"><button id="expand-all">展开业务与辅助文件</button><button id="collapse-all">收起全部文件</button><label><input id="wrap-code" type="checkbox">代码换行</label><span id="interaction-status" aria-live="polite"></span></div>
+<section id="change-relations"><h2>修复与需求 · 随代码展开</h2><p class="group-note">R 是关系编号，不是 commit 编号；一条关系可跨多个提交，同一提交可涉及多条关系。阶段内业务/辅助/测试分别展示，文件和块按危险系数降序。</p><article class="change-relation" id="relation-R1"><h3><span class="change-kind">需求</span> R1 · 优惠后金额预览</h3><p>扩展预览算式和标签；目标范围内没有网络请求、持久化或支付副作用。</p><p class="relation-status"><strong>当前状态：</strong>文案代码已核对；算式 P1 待修正；界面未验</p><section class="change-step" id="step-R1-final"><h4><span class="change-kind">需求</span> worktree · 优惠预览 · 审查报告示例</h4><p>当前未提交样例变化，非虚构新增 commit</p><div class="file-group"><h3>业务代码</h3><p class="group-note">2 文件 · 文件及内部代码块均按危险系数降序</p><ol class="file-list"><li class="file-item" data-path="src/quote.js " data-bucket="业务" data-has-issue="yes"><details class="file-review" data-review-expand id="R1-final-file-F002" open><summary class="file-summary"><span class="file-primary"><span class="bucket bucket-0">业务</span><a class="file-path" title="src/quote.js" href="file:///example/quote-demo/src/quote.js#L2"><span class="file-name">quote.js</span><span class="full-path">src/quote.js (line 2)</span></a></span><span class="file-metrics"><span class="scope-badge">私有文件</span><span class="risk-badge risk-medium">危险系数 41/100 · 中</span><span class="status">modified</span><span>总行数 4 → 5</span><span class="addition">+3</span><span class="deletion">−2</span><span>1 块</span><span class="problem-count">1 项问题</span></span></summary><div class="file-content"><p class="risk-reason">优惠比例错误会改变展示金额</p><details class="risk-detail"><summary>评分依据与影响范围</summary><p>虚构隔离样例，只用于金额预览演示</p><section class="matrix-section"><h2>六维评分</h2><div class="table-scroll"><table><thead><tr><th scope="col">维度</th><th scope="col">权重</th><th scope="col">等级 0–4</th><th scope="col">本项依据</th><th scope="col">证据</th></tr></thead><tbody><tr><td>业务影响</td><td>25</td><td>2</td><td>优惠比例错误会改变展示金额</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>公共复用</td><td>20</td><td>1</td><td>样例只有报价预览消费者</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>已有功能</td><td>20</td><td>2</td><td>新增优惠参数改变原金额输出</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>复杂度</td><td>15</td><td>1</td><td>局部同步计算，无状态或网络</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>规模</td><td>10</td><td>1</td><td>少量增删，核心算式变化</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>验证缺口</td><td>10</td><td>3</td><td>只做代码核对，尚无界面回归</td><td>虚构隔离样例 src/quote*.js</td></tr></tbody></table></div></section><p>模型 review-priority-v1；置信度：示例范围内代码依据明确，界面运行待验证。无额外升级下限。文件分数保留最高块分数</p></details><ol class="review-fields"><li><strong>文件用途：</strong><div>计算展示金额</div></li><li><strong>改动位置：</strong><div>src/quote.js:1</div></li><li><strong>需求文档中需求描述：</strong><div><p class="requirement-description">预览优惠比例对应金额</p><p>需求覆盖：明确要求</p><details class="requirement-details"><summary>展开补充说明</summary><dl class="field-grid"><dt>需求来源</dt><dd>本文件的虚构示例目标</dd><dt>改动用途</dt><dd>增加优惠参数与展示算式</dd><dt>为什么要改</dt><dd>样例需求要求按百分比预览优惠后金额</dd><dt>不改动有什么影响</dt><dd>没有优惠预览能力</dd></dl></details></div></li><li><strong>是否符合最小必要改动：</strong><div>符合：分别保留局部算式与标签职责，无额外抽取</div></li><li><strong>必要性：</strong><div>必要</div></li><li><strong>合理性：</strong><div>新增参数范围有限；算式未除以 100，需按 P1 修正</div></li><li><strong>功能丢失：</strong><div>否</div></li><li><strong>独立隐患 1：</strong><div>优惠 10% 时，预览金额变为负数（P1；代码实锤；频率待确认）</div></li><li><strong>补充风险与验证边界：</strong><div>P1：优惠 10 被直接当作倍数减去</div></li><li><strong>分类依据：</strong><div>源码扩展名；工具/测试支撑可能需人工改分类</div></li></ol><p class="file-issues">关联问题：<a class="issue-ref" data-open-target href="#final-issue-P1">P1</a></p><div class="patch-actions"><button type="button" data-copy-patch>复制完整 diff</button><button type="button" data-download-patch>下载此文件 diff</button><span hidden class="raw-patch" data-patch-base64="ZGlmZiAtLWdpdCBhL3NyYy9xdW90ZS5qcyBiL3NyYy9xdW90ZS5qcwppbmRleCBiZDBlNzA1MGI0NTMzM2JiZTQwMzM3NWMyN2E3ZmVkYTVlNzViOGE0Li5iN2UyZThjYzA1OTk5Zjk0OGZjMDE1Mjk1ZTk4MmFmMjMxN2Y4YmFmIDEwMDY0NAotLS0gYS9zcmMvcXVvdGUuanMKKysrIGIvc3JjL3F1b3RlLmpzCkBAIC0xLDQgKzEsNSBAQAogLy8g6Jma5p6E5bGV56S65oql5Lu377yM5LiN5Y+C5LiO55yf5a6e5pSv5LuY44CCCi1leHBvcnQgZnVuY3Rpb24gcXVvdGUocXVhbnRpdHksIHVuaXRQcmljZSkgewotICByZXR1cm4gcXVhbnRpdHkgKiB1bml0UHJpY2U7CitleHBvcnQgZnVuY3Rpb24gcXVvdGUocXVhbnRpdHksIHVuaXRQcmljZSwgZGlzY291bnRQZXJjZW50ID0gMCkgeworICBjb25zdCBzdWJ0b3RhbCA9IHF1YW50aXR5ICogdW5pdFByaWNlOworICByZXR1cm4gc3VidG90YWwgKiAoMSAtIGRpc2NvdW50UGVyY2VudCk7CiB9Cg==" data-filename="src/quote.js"></span></div><p class="diff-legend">左侧为旧行号 / 新行号；红色删除、绿色新增；元信息及全部代码块均保留。行数未知显示“未知”，不按 0 计算。</p><pre class="diff-meta"><code>diff --git a/src/quote.js b/src/quote.js
+index bd0e7050b45333bbe403375c27a7feda5e75b8a4..b7e2e8cc05999f948fc015295e982af2317f8baf 100644
+--- a/src/quote.js
++++ b/src/quote.js</code></pre><details class="hunk-review" data-necessity="必要" data-review-expand id="R1-final-hunk-F002-H01" open><summary><span class="hunk-title">代码块 1 · 输入优惠比例后看到对应预览金额</span><span class="anchor-label">F002-H01</span><span class="necessity-badge">必要性：必要</span><span class="title-badges"><span class="delta">+3 / −2 行</span><span class="scope-badge">私有方法</span><span class="risk-badge risk-medium">危险系数 41/100 · 中</span></span></summary><p class="risk-reason">优惠比例错误会改变展示金额</p><details class="risk-detail"><summary>评分依据与影响范围</summary><p>样例模块内部预览用途</p><section class="matrix-section"><h2>六维评分</h2><div class="table-scroll"><table><thead><tr><th scope="col">维度</th><th scope="col">权重</th><th scope="col">等级 0–4</th><th scope="col">本项依据</th><th scope="col">证据</th></tr></thead><tbody><tr><td>业务影响</td><td>25</td><td>2</td><td>优惠比例错误会改变展示金额</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>公共复用</td><td>20</td><td>1</td><td>样例只有报价预览消费者</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>已有功能</td><td>20</td><td>2</td><td>新增优惠参数改变原金额输出</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>复杂度</td><td>15</td><td>1</td><td>局部同步计算，无状态或网络</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>规模</td><td>10</td><td>1</td><td>少量增删，核心算式变化</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>验证缺口</td><td>10</td><td>3</td><td>只做代码核对，尚无界面回归</td><td>虚构隔离样例 src/quote*.js</td></tr></tbody></table></div></section><p>模型 review-priority-v1；置信度：示例范围内代码依据明确，界面运行待验证。无额外升级下限。文件分数保留最高块分数</p></details><pre class="diff-code"><code><span class="diff-row hunk-header"><span class="old-line"></span><span class="new-line"></span><span class="code-text">@@ -1,4 +1,5 @@</span></span>
+<span class="diff-row context"><span class="old-line" aria-hidden="true">1</span><span class="new-line" aria-hidden="true">1</span><span class="code-cell"><span class="code-text"> // 虚构展示报价，不参与真实支付。</span></span></span>
+<span class="diff-row removed"><span class="old-line" aria-hidden="true">2</span><span class="new-line" aria-hidden="true"></span><span class="code-cell"><span class="code-text">-export function quote(quantity, unitPrice) {</span></span></span>
+<span class="diff-row removed"><span class="old-line" aria-hidden="true">3</span><span class="new-line" aria-hidden="true"></span><span class="code-cell"><span class="code-text">-  return quantity * unitPrice;</span></span></span>
+<span class="diff-row added"><span class="old-line" aria-hidden="true"></span><span class="new-line" aria-hidden="true">2</span><span class="code-cell"><span class="code-text">+export function quote(quantity, unitPrice, discountPercent = 0) {</span></span></span>
+<span class="diff-row added"><span class="old-line" aria-hidden="true"></span><span class="new-line" aria-hidden="true">3</span><span class="code-cell"><span class="code-text">+  const subtotal = quantity * unitPrice;</span></span></span>
+<span class="diff-row added is-focus"><span class="old-line" aria-hidden="true"></span><span class="new-line" aria-hidden="true">4</span><span class="code-cell"><span class="focus-markers"><span class="evidence-marker" id="R1-final-focus-F002-H01-M1" title="10% 的输入是 10，必须先除以 100" aria-label="重点 1，new 行 4">1</span></span><span class="code-text">+  return subtotal * (1 - discountPercent);</span></span></span>
+<span class="diff-row context"><span class="old-line" aria-hidden="true">4</span><span class="new-line" aria-hidden="true">5</span><span class="code-cell"><span class="code-text"> }</span></span></span></code></pre><ol class="focus-explanations"><li value="1"><a data-open-target href="#R1-final-focus-F002-H01-M1">重点 1 · 新行 4</a>：10% 的输入是 10，必须先除以 100</li></ol><dl class="field-grid"><dt>改动用途</dt><dd>增加优惠参数与展示算式</dd><dt>必要性</dt><dd>必要</dd><dt>合理性与边界</dt><dd>新增参数范围有限；算式未除以 100，需按 P1 修正</dd><dt>移除此块的影响</dt><dd>没有优惠预览能力</dd><dt>证据</dt><dd>E1：src/quote.js 第 4 行，百分比 10 未换算为 0.1</dd></dl><p class="hunk-issues">关联问题：<a class="issue-ref" data-open-target href="#final-issue-P1">P1</a></p></details></div></details></li><li class="file-item" data-path="src/quote-label.js " data-bucket="业务" data-has-issue="no"><details class="file-review" data-review-expand id="R1-final-file-F001" open><summary class="file-summary"><span class="file-primary"><span class="bucket bucket-0">业务</span><a class="file-path" title="src/quote-label.js" href="file:///example/quote-demo/src/quote-label.js#L2"><span class="file-name">quote-label.js</span><span class="full-path">src/quote-label.js (line 2)</span></a></span><span class="file-metrics"><span class="scope-badge">私有文件</span><span class="risk-badge risk-low">危险系数 16/100 · 低</span><span class="status">modified</span><span>总行数 3 → 3</span><span class="addition">+1</span><span class="deletion">−1</span><span>1 块</span></span></summary><div class="file-content"><p class="risk-reason">只变更预览文案</p><details class="risk-detail"><summary>评分依据与影响范围</summary><p>虚构隔离样例，只用于金额预览演示</p><section class="matrix-section"><h2>六维评分</h2><div class="table-scroll"><table><thead><tr><th scope="col">维度</th><th scope="col">权重</th><th scope="col">等级 0–4</th><th scope="col">本项依据</th><th scope="col">证据</th></tr></thead><tbody><tr><td>业务影响</td><td>25</td><td>1</td><td>只变更预览文案</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>公共复用</td><td>20</td><td>1</td><td>样例预览页使用标签</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>已有功能</td><td>20</td><td>0</td><td>没有改变数据或错误行为</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>复杂度</td><td>15</td><td>0</td><td>固定字符串，无分支</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>规模</td><td>10</td><td>1</td><td>单行替换</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>验证缺口</td><td>10</td><td>1</td><td>真实界面未执行</td><td>虚构隔离样例 src/quote*.js</td></tr></tbody></table></div></section><p>模型 review-priority-v1；置信度：示例范围内代码依据明确，界面运行待验证。无额外升级下限。文件分数保留最高块分数</p></details><ol class="review-fields"><li><strong>文件用途：</strong><div>提供预览标签</div></li><li><strong>改动位置：</strong><div>src/quote-label.js:1</div></li><li><strong>需求文档中需求描述：</strong><div><p class="requirement-description">显示“优惠后金额预览”</p><p>需求覆盖：明确要求</p><details class="requirement-details"><summary>展开补充说明</summary><dl class="field-grid"><dt>需求来源</dt><dd>本文件的虚构示例目标</dd><dt>改动用途</dt><dd>明确这是预览金额</dd><dt>为什么要改</dt><dd>避免读者把预览值当作已支付金额</dd><dt>不改动有什么影响</dt><dd>读者无法从标签识别预览范围</dd></dl></details></div></li><li><strong>是否符合最小必要改动：</strong><div>符合：分别保留局部算式与标签职责，无额外抽取</div></li><li><strong>必要性：</strong><div>必要</div></li><li><strong>合理性：</strong><div>仅替换标签，保留原函数消费者</div></li><li><strong>功能丢失：</strong><div>否</div></li><li><strong>补充风险与验证边界：</strong><div>无</div></li><li><strong>分类依据：</strong><div>源码扩展名；工具/测试支撑可能需人工改分类</div></li></ol><div class="patch-actions"><button type="button" data-copy-patch>复制完整 diff</button><button type="button" data-download-patch>下载此文件 diff</button><span hidden class="raw-patch" data-patch-base64="ZGlmZiAtLWdpdCBhL3NyYy9xdW90ZS1sYWJlbC5qcyBiL3NyYy9xdW90ZS1sYWJlbC5qcwppbmRleCBlNTk5NWUxNmYxYzY3YWM2ZmViNDM3MDVhZGE1NjZiYWZkODk1OWIwLi41NDM4MjdlOTE0ZDAwOWRjZmM5ZTE5MzdhMDQ1ZDNiZmYwZTM5ZGNmIDEwMDY0NAotLS0gYS9zcmMvcXVvdGUtbGFiZWwuanMKKysrIGIvc3JjL3F1b3RlLWxhYmVsLmpzCkBAIC0xLDMgKzEsMyBAQAogZXhwb3J0IGZ1bmN0aW9uIHF1b3RlTGFiZWwoKSB7Ci0gIHJldHVybiAi5ZWG5ZOB5bCP6K6hIjsKKyAgcmV0dXJuICLkvJjmg6DlkI7ph5Hpop3pooTop4giOwogfQo=" data-filename="src/quote-label.js"></span></div><p class="diff-legend">左侧为旧行号 / 新行号；红色删除、绿色新增；元信息及全部代码块均保留。行数未知显示“未知”，不按 0 计算。</p><pre class="diff-meta"><code>diff --git a/src/quote-label.js b/src/quote-label.js
+index e5995e16f1c67ac6feb43705ada566bafd8959b0..543827e914d009dcfc9e1937a045d3bff0e39dcf 100644
+--- a/src/quote-label.js
++++ b/src/quote-label.js</code></pre><details class="hunk-review" data-necessity="必要" data-review-expand id="R1-final-hunk-F001-H01" open><summary><span class="hunk-title">代码块 1 · 查看金额时看到预览标签</span><span class="anchor-label">F001-H01</span><span class="necessity-badge">必要性：必要</span><span class="title-badges"><span class="delta">+1 / −1 行</span><span class="scope-badge">私有方法</span><span class="risk-badge risk-low">危险系数 16/100 · 低</span></span></summary><p class="risk-reason">只变更预览文案</p><details class="risk-detail"><summary>评分依据与影响范围</summary><p>样例模块内部预览用途</p><section class="matrix-section"><h2>六维评分</h2><div class="table-scroll"><table><thead><tr><th scope="col">维度</th><th scope="col">权重</th><th scope="col">等级 0–4</th><th scope="col">本项依据</th><th scope="col">证据</th></tr></thead><tbody><tr><td>业务影响</td><td>25</td><td>1</td><td>只变更预览文案</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>公共复用</td><td>20</td><td>1</td><td>样例预览页使用标签</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>已有功能</td><td>20</td><td>0</td><td>没有改变数据或错误行为</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>复杂度</td><td>15</td><td>0</td><td>固定字符串，无分支</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>规模</td><td>10</td><td>1</td><td>单行替换</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>验证缺口</td><td>10</td><td>1</td><td>真实界面未执行</td><td>虚构隔离样例 src/quote*.js</td></tr></tbody></table></div></section><p>模型 review-priority-v1；置信度：示例范围内代码依据明确，界面运行待验证。无额外升级下限。文件分数保留最高块分数</p></details><pre class="diff-code"><code><span class="diff-row hunk-header"><span class="old-line"></span><span class="new-line"></span><span class="code-text">@@ -1,3 +1,3 @@</span></span>
+<span class="diff-row context"><span class="old-line" aria-hidden="true">1</span><span class="new-line" aria-hidden="true">1</span><span class="code-cell"><span class="code-text"> export function quoteLabel() {</span></span></span>
+<span class="diff-row removed"><span class="old-line" aria-hidden="true">2</span><span class="new-line" aria-hidden="true"></span><span class="code-cell"><span class="code-text">-  return &quot;商品小计&quot;;</span></span></span>
+<span class="diff-row added"><span class="old-line" aria-hidden="true"></span><span class="new-line" aria-hidden="true">2</span><span class="code-cell"><span class="code-text">+  return &quot;优惠后金额预览&quot;;</span></span></span>
+<span class="diff-row context"><span class="old-line" aria-hidden="true">3</span><span class="new-line" aria-hidden="true">3</span><span class="code-cell"><span class="code-text"> }</span></span></span></code></pre><dl class="field-grid"><dt>改动用途</dt><dd>明确这是预览金额</dd><dt>必要性</dt><dd>必要</dd><dt>合理性与边界</dt><dd>仅替换标签，保留原函数消费者</dd><dt>移除此块的影响</dt><dd>读者无法从标签识别预览范围</dd><dt>证据</dt><dd>E2：src/quote-label.js 第 2 行仅改展示文案</dd></dl></details></div></details></li></ol></div></section></article></section>
+<section id="final-diff"><h2>最终完整 diff · 文件与块按危险系数降序</h2><div class="file-group"><h3>业务代码</h3><p class="group-note">2 文件 · 文件及内部代码块均按危险系数降序</p><ol class="file-list"><li class="file-item" data-path="src/quote.js " data-bucket="业务" data-has-issue="yes"><details class="file-review" data-review-expand id="final-file-F002" open><summary class="file-summary"><span class="file-primary"><span class="bucket bucket-0">业务</span><a class="file-path" title="src/quote.js" href="file:///example/quote-demo/src/quote.js#L2"><span class="file-name">quote.js</span><span class="full-path">src/quote.js (line 2)</span></a></span><span class="file-metrics"><span class="scope-badge">私有文件</span><span class="risk-badge risk-medium">危险系数 41/100 · 中</span><span class="status">modified</span><span>总行数 4 → 5</span><span class="addition">+3</span><span class="deletion">−2</span><span>1 块</span><span class="problem-count">1 项问题</span></span></summary><div class="file-content"><p class="risk-reason">优惠比例错误会改变展示金额</p><details class="risk-detail"><summary>评分依据与影响范围</summary><p>虚构隔离样例，只用于金额预览演示</p><section class="matrix-section"><h2>六维评分</h2><div class="table-scroll"><table><thead><tr><th scope="col">维度</th><th scope="col">权重</th><th scope="col">等级 0–4</th><th scope="col">本项依据</th><th scope="col">证据</th></tr></thead><tbody><tr><td>业务影响</td><td>25</td><td>2</td><td>优惠比例错误会改变展示金额</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>公共复用</td><td>20</td><td>1</td><td>样例只有报价预览消费者</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>已有功能</td><td>20</td><td>2</td><td>新增优惠参数改变原金额输出</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>复杂度</td><td>15</td><td>1</td><td>局部同步计算，无状态或网络</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>规模</td><td>10</td><td>1</td><td>少量增删，核心算式变化</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>验证缺口</td><td>10</td><td>3</td><td>只做代码核对，尚无界面回归</td><td>虚构隔离样例 src/quote*.js</td></tr></tbody></table></div></section><p>模型 review-priority-v1；置信度：示例范围内代码依据明确，界面运行待验证。无额外升级下限。文件分数保留最高块分数</p></details><ol class="review-fields"><li><strong>文件用途：</strong><div>计算展示金额</div></li><li><strong>改动位置：</strong><div>src/quote.js:1</div></li><li><strong>需求文档中需求描述：</strong><div><p class="requirement-description">预览优惠比例对应金额</p><p>需求覆盖：明确要求</p><details class="requirement-details"><summary>展开补充说明</summary><dl class="field-grid"><dt>需求来源</dt><dd>本文件的虚构示例目标</dd><dt>改动用途</dt><dd>增加优惠参数与展示算式</dd><dt>为什么要改</dt><dd>样例需求要求按百分比预览优惠后金额</dd><dt>不改动有什么影响</dt><dd>没有优惠预览能力</dd></dl></details></div></li><li><strong>是否符合最小必要改动：</strong><div>符合：分别保留局部算式与标签职责，无额外抽取</div></li><li><strong>必要性：</strong><div>必要</div></li><li><strong>合理性：</strong><div>新增参数范围有限；算式未除以 100，需按 P1 修正</div></li><li><strong>功能丢失：</strong><div>否</div></li><li><strong>独立隐患 1：</strong><div>优惠 10% 时，预览金额变为负数（P1；代码实锤；频率待确认）</div></li><li><strong>补充风险与验证边界：</strong><div>P1：优惠 10 被直接当作倍数减去</div></li><li><strong>分类依据：</strong><div>源码扩展名；工具/测试支撑可能需人工改分类</div></li></ol><p class="file-issues">关联问题：<a class="issue-ref" data-open-target href="#final-issue-P1">P1</a></p><div class="patch-actions"><button type="button" data-copy-patch>复制完整 diff</button><button type="button" data-download-patch>下载此文件 diff</button><span hidden class="raw-patch" data-patch-base64="ZGlmZiAtLWdpdCBhL3NyYy9xdW90ZS5qcyBiL3NyYy9xdW90ZS5qcwppbmRleCBiZDBlNzA1MGI0NTMzM2JiZTQwMzM3NWMyN2E3ZmVkYTVlNzViOGE0Li5iN2UyZThjYzA1OTk5Zjk0OGZjMDE1Mjk1ZTk4MmFmMjMxN2Y4YmFmIDEwMDY0NAotLS0gYS9zcmMvcXVvdGUuanMKKysrIGIvc3JjL3F1b3RlLmpzCkBAIC0xLDQgKzEsNSBAQAogLy8g6Jma5p6E5bGV56S65oql5Lu377yM5LiN5Y+C5LiO55yf5a6e5pSv5LuY44CCCi1leHBvcnQgZnVuY3Rpb24gcXVvdGUocXVhbnRpdHksIHVuaXRQcmljZSkgewotICByZXR1cm4gcXVhbnRpdHkgKiB1bml0UHJpY2U7CitleHBvcnQgZnVuY3Rpb24gcXVvdGUocXVhbnRpdHksIHVuaXRQcmljZSwgZGlzY291bnRQZXJjZW50ID0gMCkgeworICBjb25zdCBzdWJ0b3RhbCA9IHF1YW50aXR5ICogdW5pdFByaWNlOworICByZXR1cm4gc3VidG90YWwgKiAoMSAtIGRpc2NvdW50UGVyY2VudCk7CiB9Cg==" data-filename="src/quote.js"></span></div><p class="diff-legend">左侧为旧行号 / 新行号；红色删除、绿色新增；元信息及全部代码块均保留。行数未知显示“未知”，不按 0 计算。</p><pre class="diff-meta"><code>diff --git a/src/quote.js b/src/quote.js
+index bd0e7050b45333bbe403375c27a7feda5e75b8a4..b7e2e8cc05999f948fc015295e982af2317f8baf 100644
+--- a/src/quote.js
++++ b/src/quote.js</code></pre><details class="hunk-review" data-necessity="必要" data-review-expand id="final-hunk-F002-H01" open><summary><span class="hunk-title">代码块 1 · 输入优惠比例后看到对应预览金额</span><span class="anchor-label">F002-H01</span><span class="necessity-badge">必要性：必要</span><span class="title-badges"><span class="delta">+3 / −2 行</span><span class="scope-badge">私有方法</span><span class="risk-badge risk-medium">危险系数 41/100 · 中</span></span></summary><p class="risk-reason">优惠比例错误会改变展示金额</p><details class="risk-detail"><summary>评分依据与影响范围</summary><p>样例模块内部预览用途</p><section class="matrix-section"><h2>六维评分</h2><div class="table-scroll"><table><thead><tr><th scope="col">维度</th><th scope="col">权重</th><th scope="col">等级 0–4</th><th scope="col">本项依据</th><th scope="col">证据</th></tr></thead><tbody><tr><td>业务影响</td><td>25</td><td>2</td><td>优惠比例错误会改变展示金额</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>公共复用</td><td>20</td><td>1</td><td>样例只有报价预览消费者</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>已有功能</td><td>20</td><td>2</td><td>新增优惠参数改变原金额输出</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>复杂度</td><td>15</td><td>1</td><td>局部同步计算，无状态或网络</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>规模</td><td>10</td><td>1</td><td>少量增删，核心算式变化</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>验证缺口</td><td>10</td><td>3</td><td>只做代码核对，尚无界面回归</td><td>虚构隔离样例 src/quote*.js</td></tr></tbody></table></div></section><p>模型 review-priority-v1；置信度：示例范围内代码依据明确，界面运行待验证。无额外升级下限。文件分数保留最高块分数</p></details><pre class="diff-code"><code><span class="diff-row hunk-header"><span class="old-line"></span><span class="new-line"></span><span class="code-text">@@ -1,4 +1,5 @@</span></span>
+<span class="diff-row context"><span class="old-line" aria-hidden="true">1</span><span class="new-line" aria-hidden="true">1</span><span class="code-cell"><span class="code-text"> // 虚构展示报价，不参与真实支付。</span></span></span>
+<span class="diff-row removed"><span class="old-line" aria-hidden="true">2</span><span class="new-line" aria-hidden="true"></span><span class="code-cell"><span class="code-text">-export function quote(quantity, unitPrice) {</span></span></span>
+<span class="diff-row removed"><span class="old-line" aria-hidden="true">3</span><span class="new-line" aria-hidden="true"></span><span class="code-cell"><span class="code-text">-  return quantity * unitPrice;</span></span></span>
+<span class="diff-row added"><span class="old-line" aria-hidden="true"></span><span class="new-line" aria-hidden="true">2</span><span class="code-cell"><span class="code-text">+export function quote(quantity, unitPrice, discountPercent = 0) {</span></span></span>
+<span class="diff-row added"><span class="old-line" aria-hidden="true"></span><span class="new-line" aria-hidden="true">3</span><span class="code-cell"><span class="code-text">+  const subtotal = quantity * unitPrice;</span></span></span>
+<span class="diff-row added is-focus"><span class="old-line" aria-hidden="true"></span><span class="new-line" aria-hidden="true">4</span><span class="code-cell"><span class="focus-markers"><span class="evidence-marker" id="final-focus-F002-H01-M1" title="10% 的输入是 10，必须先除以 100" aria-label="重点 1，new 行 4">1</span></span><span class="code-text">+  return subtotal * (1 - discountPercent);</span></span></span>
+<span class="diff-row context"><span class="old-line" aria-hidden="true">4</span><span class="new-line" aria-hidden="true">5</span><span class="code-cell"><span class="code-text"> }</span></span></span></code></pre><ol class="focus-explanations"><li value="1"><a data-open-target href="#final-focus-F002-H01-M1">重点 1 · 新行 4</a>：10% 的输入是 10，必须先除以 100</li></ol><dl class="field-grid"><dt>改动用途</dt><dd>增加优惠参数与展示算式</dd><dt>必要性</dt><dd>必要</dd><dt>合理性与边界</dt><dd>新增参数范围有限；算式未除以 100，需按 P1 修正</dd><dt>移除此块的影响</dt><dd>没有优惠预览能力</dd><dt>证据</dt><dd>E1：src/quote.js 第 4 行，百分比 10 未换算为 0.1</dd></dl><p class="hunk-issues">关联问题：<a class="issue-ref" data-open-target href="#final-issue-P1">P1</a></p></details></div></details></li><li class="file-item" data-path="src/quote-label.js " data-bucket="业务" data-has-issue="no"><details class="file-review" data-review-expand id="final-file-F001"><summary class="file-summary"><span class="file-primary"><span class="bucket bucket-0">业务</span><a class="file-path" title="src/quote-label.js" href="file:///example/quote-demo/src/quote-label.js#L2"><span class="file-name">quote-label.js</span><span class="full-path">src/quote-label.js (line 2)</span></a></span><span class="file-metrics"><span class="scope-badge">私有文件</span><span class="risk-badge risk-low">危险系数 16/100 · 低</span><span class="status">modified</span><span>总行数 3 → 3</span><span class="addition">+1</span><span class="deletion">−1</span><span>1 块</span></span></summary><div class="file-content"><p class="risk-reason">只变更预览文案</p><details class="risk-detail"><summary>评分依据与影响范围</summary><p>虚构隔离样例，只用于金额预览演示</p><section class="matrix-section"><h2>六维评分</h2><div class="table-scroll"><table><thead><tr><th scope="col">维度</th><th scope="col">权重</th><th scope="col">等级 0–4</th><th scope="col">本项依据</th><th scope="col">证据</th></tr></thead><tbody><tr><td>业务影响</td><td>25</td><td>1</td><td>只变更预览文案</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>公共复用</td><td>20</td><td>1</td><td>样例预览页使用标签</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>已有功能</td><td>20</td><td>0</td><td>没有改变数据或错误行为</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>复杂度</td><td>15</td><td>0</td><td>固定字符串，无分支</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>规模</td><td>10</td><td>1</td><td>单行替换</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>验证缺口</td><td>10</td><td>1</td><td>真实界面未执行</td><td>虚构隔离样例 src/quote*.js</td></tr></tbody></table></div></section><p>模型 review-priority-v1；置信度：示例范围内代码依据明确，界面运行待验证。无额外升级下限。文件分数保留最高块分数</p></details><ol class="review-fields"><li><strong>文件用途：</strong><div>提供预览标签</div></li><li><strong>改动位置：</strong><div>src/quote-label.js:1</div></li><li><strong>需求文档中需求描述：</strong><div><p class="requirement-description">显示“优惠后金额预览”</p><p>需求覆盖：明确要求</p><details class="requirement-details"><summary>展开补充说明</summary><dl class="field-grid"><dt>需求来源</dt><dd>本文件的虚构示例目标</dd><dt>改动用途</dt><dd>明确这是预览金额</dd><dt>为什么要改</dt><dd>避免读者把预览值当作已支付金额</dd><dt>不改动有什么影响</dt><dd>读者无法从标签识别预览范围</dd></dl></details></div></li><li><strong>是否符合最小必要改动：</strong><div>符合：分别保留局部算式与标签职责，无额外抽取</div></li><li><strong>必要性：</strong><div>必要</div></li><li><strong>合理性：</strong><div>仅替换标签，保留原函数消费者</div></li><li><strong>功能丢失：</strong><div>否</div></li><li><strong>补充风险与验证边界：</strong><div>无</div></li><li><strong>分类依据：</strong><div>源码扩展名；工具/测试支撑可能需人工改分类</div></li></ol><div class="patch-actions"><button type="button" data-copy-patch>复制完整 diff</button><button type="button" data-download-patch>下载此文件 diff</button><span hidden class="raw-patch" data-patch-base64="ZGlmZiAtLWdpdCBhL3NyYy9xdW90ZS1sYWJlbC5qcyBiL3NyYy9xdW90ZS1sYWJlbC5qcwppbmRleCBlNTk5NWUxNmYxYzY3YWM2ZmViNDM3MDVhZGE1NjZiYWZkODk1OWIwLi41NDM4MjdlOTE0ZDAwOWRjZmM5ZTE5MzdhMDQ1ZDNiZmYwZTM5ZGNmIDEwMDY0NAotLS0gYS9zcmMvcXVvdGUtbGFiZWwuanMKKysrIGIvc3JjL3F1b3RlLWxhYmVsLmpzCkBAIC0xLDMgKzEsMyBAQAogZXhwb3J0IGZ1bmN0aW9uIHF1b3RlTGFiZWwoKSB7Ci0gIHJldHVybiAi5ZWG5ZOB5bCP6K6hIjsKKyAgcmV0dXJuICLkvJjmg6DlkI7ph5Hpop3pooTop4giOwogfQo=" data-filename="src/quote-label.js"></span></div><p class="diff-legend">左侧为旧行号 / 新行号；红色删除、绿色新增；元信息及全部代码块均保留。行数未知显示“未知”，不按 0 计算。</p><pre class="diff-meta"><code>diff --git a/src/quote-label.js b/src/quote-label.js
+index e5995e16f1c67ac6feb43705ada566bafd8959b0..543827e914d009dcfc9e1937a045d3bff0e39dcf 100644
+--- a/src/quote-label.js
++++ b/src/quote-label.js</code></pre><details class="hunk-review" data-necessity="必要" data-review-expand id="final-hunk-F001-H01"><summary><span class="hunk-title">代码块 1 · 查看金额时看到预览标签</span><span class="anchor-label">F001-H01</span><span class="necessity-badge">必要性：必要</span><span class="title-badges"><span class="delta">+1 / −1 行</span><span class="scope-badge">私有方法</span><span class="risk-badge risk-low">危险系数 16/100 · 低</span></span></summary><p class="risk-reason">只变更预览文案</p><details class="risk-detail"><summary>评分依据与影响范围</summary><p>样例模块内部预览用途</p><section class="matrix-section"><h2>六维评分</h2><div class="table-scroll"><table><thead><tr><th scope="col">维度</th><th scope="col">权重</th><th scope="col">等级 0–4</th><th scope="col">本项依据</th><th scope="col">证据</th></tr></thead><tbody><tr><td>业务影响</td><td>25</td><td>1</td><td>只变更预览文案</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>公共复用</td><td>20</td><td>1</td><td>样例预览页使用标签</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>已有功能</td><td>20</td><td>0</td><td>没有改变数据或错误行为</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>复杂度</td><td>15</td><td>0</td><td>固定字符串，无分支</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>规模</td><td>10</td><td>1</td><td>单行替换</td><td>虚构隔离样例 src/quote*.js</td></tr><tr><td>验证缺口</td><td>10</td><td>1</td><td>真实界面未执行</td><td>虚构隔离样例 src/quote*.js</td></tr></tbody></table></div></section><p>模型 review-priority-v1；置信度：示例范围内代码依据明确，界面运行待验证。无额外升级下限。文件分数保留最高块分数</p></details><pre class="diff-code"><code><span class="diff-row hunk-header"><span class="old-line"></span><span class="new-line"></span><span class="code-text">@@ -1,3 +1,3 @@</span></span>
+<span class="diff-row context"><span class="old-line" aria-hidden="true">1</span><span class="new-line" aria-hidden="true">1</span><span class="code-cell"><span class="code-text"> export function quoteLabel() {</span></span></span>
+<span class="diff-row removed"><span class="old-line" aria-hidden="true">2</span><span class="new-line" aria-hidden="true"></span><span class="code-cell"><span class="code-text">-  return &quot;商品小计&quot;;</span></span></span>
+<span class="diff-row added"><span class="old-line" aria-hidden="true"></span><span class="new-line" aria-hidden="true">2</span><span class="code-cell"><span class="code-text">+  return &quot;优惠后金额预览&quot;;</span></span></span>
+<span class="diff-row context"><span class="old-line" aria-hidden="true">3</span><span class="new-line" aria-hidden="true">3</span><span class="code-cell"><span class="code-text"> }</span></span></span></code></pre><dl class="field-grid"><dt>改动用途</dt><dd>明确这是预览金额</dd><dt>必要性</dt><dd>必要</dd><dt>合理性与边界</dt><dd>仅替换标签，保留原函数消费者</dd><dt>移除此块的影响</dt><dd>读者无法从标签识别预览范围</dd><dt>证据</dt><dd>E2：src/quote-label.js 第 2 行仅改展示文案</dd></dl></details></div></details></li></ol></div><details class="semantic-details"><summary>完整语义审查明细</summary><section class="matrix-section"><h2>当前改动影响范围与潜在隐患</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>预览读者</td><td>金额与标签</td><td>P1：百分比算式</td></tr></tbody></table></div></section><section class="matrix-section"><h2>基线、约束与验证矩阵</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>隔离 Git 基线 → 工作区</td><td>无支付/网络</td><td>代码层核对，界面待验</td></tr></tbody></table></div></section><section class="matrix-section"><h2>最小必要改动基线</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>需求：优惠预览</td><td>局部计算与标签</td><td>不改真实支付</td></tr></tbody></table></div></section><section class="matrix-section"><h2>最小必要改动门禁</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>两个文件分别承担计算和文案</td><td>均有直接目标</td><td>没有额外抽取</td></tr></tbody></table></div></section><section class="matrix-section"><h2>功能点前后差异</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>原小计 → 优惠预览</td><td>0% 保留旧行为</td><td>10% 算式 P1</td></tr></tbody></table></div></section><section class="matrix-section"><h2>文件功能影响与丢失</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>报价计算与标签</td><td>原函数保留</td><td>旧无优惠输入默认 0</td></tr></tbody></table></div></section><section class="matrix-section"><h2>冗余/过度改动</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>未发现样例范围外变化</td><td>两处均必要</td><td>必要不代表算式正确</td></tr></tbody></table></div></section><section class="matrix-section"><h2>用户视角验证</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>2 件 × 50，优惠 10%</td><td>应为 90</td><td>候选路径，界面待验</td></tr></tbody></table></div></section><section class="matrix-section"><h2>待确认改动与验证边界</h2><div class="table-scroll"><table><thead><tr><th scope="col">对象</th><th scope="col">判断</th><th scope="col">依据/边界</th></tr></thead><tbody><tr><td>无真实消费者</td><td>无设备/后台验证</td><td>仅演示报告能力</td></tr></tbody></table></div></section></details></section>
+<details class="risk-method"><summary>危险系数如何计算</summary><p>六维人工评估，非故障概率。详见 Skill 风险评分规则。</p></details>
+</details>
+<footer>审查快照 62a0c0e8e · 评分模型 review-priority-v1 · 单文件离线报告</footer></main><script>/* 仅操作本地报告 DOM 与原始 patch；不访问业务服务。 */
+(() => {
+  'use strict';
+  const byId = id => document.getElementById(id);
+  const announce = text => { byId('interaction-status').textContent = text; };
+  byId('wrap-code').addEventListener('change', e => document.body.classList.toggle('wrap-code', e.target.checked));
+  ['expand', 'collapse'].forEach(action => byId(`${action}-all`).addEventListener('click', () => {
+    document.querySelectorAll('details[data-review-expand]').forEach(d => {
+      if (action === 'collapse' || d.closest('.file-item')?.dataset.bucket !== '测试') d.open = action === 'expand';
+    });
+  }));
+  const sizeHeader = target => {
+    const relation = target.matches('.change-relation>h3');
+    target.closest(relation ? '.change-relation' : '.file-item').style.setProperty(
+      relation ? '--relation-header-height' : '--file-header-height', `${target.getBoundingClientRect().height + 18}px`);
+  };
+  const reveal = hash => {
+    let id; try { id = decodeURIComponent(hash.slice(1)); } catch { return; }
+    const target = byId(id); if (!target) return;
+    for (let p = target; p; p = p.parentElement) if (p.tagName === 'DETAILS') p.open = true;
+    // 展开后同步测量，避免后台标签的帧节流让锚点先落在旧布局。
+    [target.closest('.change-relation')?.querySelector(':scope>h3'),
+     target.closest('.file-item')?.querySelector('.file-summary')].filter(Boolean).forEach(sizeHeader);
+    target.scrollIntoView({block:'start',behavior:'instant'});
+  };
+  window.addEventListener('hashchange', () => reveal(location.hash));
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[data-open-target]'); if (!a) return;
+    e.preventDefault();
+    if (location.hash !== a.hash) history.pushState(null, '', a.hash);
+    reveal(a.hash);
+  });
+  if (location.hash) reveal(location.hash);
+  const observer = new ResizeObserver(entries => entries.forEach(({target}) => sizeHeader(target)));
+  document.querySelectorAll('.change-relation>h3,.file-review>.file-summary,.file-item>div.file-summary').forEach(h => observer.observe(h));
+  const raw = button => {
+    const data = button.closest('.file-content').querySelector('.raw-patch');
+    return {patch:new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(atob(data.dataset.patchBase64), c=>c.charCodeAt(0))),filename:data.dataset.filename};
+  };
+  document.addEventListener('click', async e => {
+    const copy=e.target.closest('[data-copy-patch]'), download=e.target.closest('[data-download-patch]');
+    if(!copy && !download) return;
+    try {
+      const {patch,filename}=raw(copy||download);
+      if(copy) { await navigator.clipboard.writeText(patch); announce('已复制完整原始 diff。'); }
+      else { const url=URL.createObjectURL(new Blob([patch],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=filename.replace(/[\\/]/g,'_')+'.diff';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000); }
+    } catch { announce('浏览器未允许此操作，请使用另一种本地 diff 导出方式。'); }
+  });
+})();
+</script></body></html>

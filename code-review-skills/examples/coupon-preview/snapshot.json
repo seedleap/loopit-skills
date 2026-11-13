@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "repo": "/example/quote-demo",
+  "branch": "feature/coupon-preview",
+  "head": "62a0c0e8e78e71a23f102ebb7f4239015a0a5a47",
+  "base": "62a0c0e8e78e71a23f102ebb7f4239015a0a5a47",
+  "target": "worktree",
+  "scope": "worktree",
+  "pathspecs": [],
+  "exclusion_patterns": [],
+  "excluded": [],
+  "layers": {
+    "staged": [],
+    "unstaged": [
+      "src/quote-label.js",
+      "src/quote.js"
+    ],
+    "untracked": []
+  },
+  "files": [
+    {
+      "id": "F001",
+      "path": "src/quote-label.js",
+      "old_path": null,
+      "status": "modified",
+      "bucket": "业务",
+      "category_basis": "源码扩展名；工具/测试支撑可能需人工改分类",
+      "before_lines": 3,
+      "after_lines": 3,
+      "added": 1,
+      "removed": 1,
+      "binary": false,
+      "patch": "diff --git a/src/quote-label.js b/src/quote-label.js\nindex e5995e16f1c67ac6feb43705ada566bafd8959b0..543827e914d009dcfc9e1937a045d3bff0e39dcf 100644\n--- a/src/quote-label.js\n+++ b/src/quote-label.js\n@@ -1,3 +1,3 @@\n export function quoteLabel() {\n-  return \"商品小计\";\n+  return \"优惠后金额预览\";\n }\n",
+      "hunks": [
+        {
+          "id": "F001-H01",
+          "header": "@@ -1,3 +1,3 @@",
+          "lines": [
+            " export function quoteLabel() {",
+            "-  return \"商品小计\";",
+            "+  return \"优惠后金额预览\";",
+            " }"
+          ]
+        }
+      ],
+      "before_sha256": "23cf17b83292f8d5692090b1aecf906b4ce6b77939919360270dae6b8d50a620",
+      "after_sha256": "cbb5c001fb0bd46fc97c1ac11ae2f5a7ebf15f93652d3d8c742bf2a9ecf8aaac"
+    },
+    {
+      "id": "F002",
+      "path": "src/quote.js",
+      "old_path": null,
+      "status": "modified",
+      "bucket": "业务",
+      "category_basis": "源码扩展名；工具/测试支撑可能需人工改分类",
+      "before_lines": 4,
+      "after_lines": 5,
+      "added": 3,
+      "removed": 2,
+      "binary": false,
+      "patch": "diff --git a/src/quote.js b/src/quote.js\nindex bd0e7050b45333bbe403375c27a7feda5e75b8a4..b7e2e8cc05999f948fc015295e982af2317f8baf 100644\n--- a/src/quote.js\n+++ b/src/quote.js\n@@ -1,4 +1,5 @@\n // 虚构展示报价，不参与真实支付。\n-export function quote(quantity, unitPrice) {\n-  return quantity * unitPrice;\n+export function quote(quantity, unitPrice, discountPercent = 0) {\n+  const subtotal = quantity * unitPrice;\n+  return subtotal * (1 - discountPercent);\n }\n",
+      "hunks": [
+        {
+          "id": "F002-H01",
+          "header": "@@ -1,4 +1,5 @@",
+          "lines": [
+            " // 虚构展示报价，不参与真实支付。",
+            "-export function quote(quantity, unitPrice) {",
+            "-  return quantity * unitPrice;",
+            "+export function quote(quantity, unitPrice, discountPercent = 0) {",
+            "+  const subtotal = quantity * unitPrice;",
+            "+  return subtotal * (1 - discountPercent);",
+            " }"
+          ]
+        }
+      ],
+      "before_sha256": "88eac32ab36e9b9af19999f24e4692be7b6daeb22a31016c946bf0cddfb7048c",
+      "after_sha256": "e496dc5dc2c30f22dce5f27d9c93a833e37ddcf7d6ec491254b99766e8eec81b"
+    }
+  ],
+  "captured_at": "2026-11-13T00:00:00+00:00",
+  "fingerprint": "caf77d930a198c464910a1b1e8efbb15dbd0aa3be647f5fdb1e69829a7bd3b36"
+}

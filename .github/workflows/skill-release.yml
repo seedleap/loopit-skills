@@ -34,6 +34,9 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm run validate
+      - run: python3 code-review-skills/tests/validate_structure.py
+      - run: python3 -B code-review-skills/skills/review-report/scripts/test_report.py
+      - run: python3 -B code-review-skills/skills/review-report/scripts/test_compact_report.py
 
   release:
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')

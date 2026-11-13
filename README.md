@@ -3,6 +3,7 @@
 seedleap 的可复用 Agent Skills 总仓库。每个领域使用独立目录打包，当前包含：
 
 - `loopit-tracking-skills`：Loopit 埋点方案设计、代码落地和自测验收。
+- [`code-review-skills`](code-review-skills/README.md)：`review-report` 审查报告。人先看业务结论、关键证据和动作，AI 复核全部非测试文件与 hunk；离线 H5 保留完整 diff，逐调用固定版本并后台自动更新。
 
 领域目录内的 Skill 可以单独安装，也可以按该领域的完整工作流一起安装。新增其他有价值的 Skill 时，沿用同样的领域目录结构，避免把不同触发条件和权限边界塞进一个入口。
 
@@ -15,7 +16,7 @@ npx skills@1.8.1 add https://github.com/seedleap/loopit-skills/tree/skill-releas
   --skill loopit-tracking-plan -a codex
 ```
 
-加 `-g` 安装到用户级。其他 Skill 的安装方式见 [埋点 Skills](loopit-tracking-skills/README.md)。推荐使用 `skill-releases`：其中每个包都包含启动器、业务正文、参考文件和已打包的更新器，调用时无需 `npx` 或安装依赖。此前从 `main` 安装的静态版本需要用上述命令覆盖安装一次。
+加 `-g` 安装到用户级。其他 Skill 的安装方式见 [埋点 Skills](loopit-tracking-skills/README.md)和[审查报告（含真实示例截图）](code-review-skills/README.md)。推荐使用 `skill-releases`：其中每个包都包含启动器、业务正文、参考文件和已打包的更新器，调用时无需 `npx` 或安装依赖。此前从 `main` 安装的静态版本需要用上述命令覆盖安装一次。
 
 每次选用 Skill 时，Codex 按生成的 `SKILL.md` 执行 `scripts/entry.mjs`，读取回执中固定的 `workflowPath` 和 `resourcesRoot`。本次任务始终使用这个版本。入口立即启动一次性后台进程，只检查当前 Skill；校验并准备好新版后，后续调用从新快照开始。后台尚未完成时仍用旧版，断网、限流、包损坏或本地修改均保留已有文件。成功检查无通知。入口依赖宿主执行 Skill 指令与已有权限；`SessionStart` 不能替代逐次调用，宿主未执行入口时无法自动检查。
 
