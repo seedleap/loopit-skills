@@ -1,0 +1,6 @@
+interface:
+  display_name: "审查报告"
+  short_description: "先全量审查，人先看改动、证据和行动，AI底稿完整保留"
+  default_prompt: "使用 $review-report 先逐文件逐块审查全部改动，再说明整个目标、改前改后、测试关注及通过标准，用✅❌⚠️说明确认问题、高关注通过项和人工动作；关键证据就近，完整逐项判断、关系演变和全部diff默认收起供AI复核，保持全部覆盖。先按memory.md读取相关案例。"
+policy:
+  allow_implicit_invocation: true

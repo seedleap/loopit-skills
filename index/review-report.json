@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "id": "review-report",
+  "version": "1.0.0",
+  "sourceCommit": "b94220dd910b1d8c337354a96d1a54cb2f229802",
+  "packagePath": "skills/review-report",
+  "tag": "skill/review-report/v1.0.0",
+  "contentHash": "dd047cb359a5e965225cf6f3be9275f7e1c74ed89fe797bdfdd4c84025f00a23"
+}

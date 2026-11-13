@@ -1,10 +1,11 @@
 {
   "schema": 1,
-  "cursor": "d16241201f8ddd506682eec851604c3c5b177f61",
+  "cursor": "b94220dd910b1d8c337354a96d1a54cb2f229802",
   "inputs": {
     "loopit-tracking-skills/skills/loopit-tracking-acceptance": "60d1cd89aa97426a3cbb831da83880edd24efbcc47b80cb094c1dc2f7659c413",
     "loopit-tracking-skills/skills/loopit-tracking-implementation": "9dd96ab29bc795a0c7e4d521a2af6bc3dd1a5e33c2f1ed8f3c08b7ab8a05ba97",
-    "loopit-tracking-skills/skills/loopit-tracking-plan": "a0c730940aadfd58c59553d48eea64cc656a54a54f5ebcc069f143eea5f4ef76"
+    "loopit-tracking-skills/skills/loopit-tracking-plan": "a0c730940aadfd58c59553d48eea64cc656a54a54f5ebcc069f143eea5f4ef76",
+    "code-review-skills/skills/review-report": "0a1449deeff61eeda242821ee2b5315a41b7348591d01649d61a514ede1ea4b1"
   },
   "skills": {
     "loopit-tracking-acceptance": {
@@ -33,6 +34,15 @@
       "packagePath": "skills/loopit-tracking-plan",
       "tag": "skill/loopit-tracking-plan/v1.0.1",
       "contentHash": "4502b1f0a2f1eccb4ee4102fb6a6e9d7f5d7acd0428b1e967238b108ac5259ae"
+    },
+    "review-report": {
+      "schema": 1,
+      "id": "review-report",
+      "version": "1.0.0",
+      "sourceCommit": "b94220dd910b1d8c337354a96d1a54cb2f229802",
+      "packagePath": "skills/review-report",
+      "tag": "skill/review-report/v1.0.0",
+      "contentHash": "dd047cb359a5e965225cf6f3be9275f7e1c74ed89fe797bdfdd4c84025f00a23"
     }
   },
   "events": {
@@ -59,6 +69,10 @@
     "loopit-tracking-plan@d16241201f8ddd506682eec851604c3c5b177f61": {
       "result": "published",
       "version": "1.0.1"
+    },
+    "review-report@b94220dd910b1d8c337354a96d1a54cb2f229802": {
+      "result": "published",
+      "version": "1.0.0"
     }
   }
 }

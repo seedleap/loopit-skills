@@ -1,0 +1,35 @@
+/* 文件头以文件为边界吸顶，代码容器独立横滚。 */
+.file-review,.hunk-review{overflow:visible}
+.file-review>.file-summary,.file-item>div.file-summary{position:sticky;top:var(--relation-header-height,0px);z-index:8;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 3px 9px #17203312}
+.file-item>div.file-summary{padding:12px}
+.file-item[data-bucket="测试"]>.file-review>.file-summary{position:static}
+.file-primary{display:flex;min-width:0;align-items:flex-start}
+.file-path{display:block;word-break:break-word}.file-name{display:block;font-size:16px}.full-path{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;color:#667085;font-weight:400}
+.file-metrics{padding-left:0;gap:5px 12px;align-items:center}
+.title-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;font-size:13px}
+.scope-badge,.risk-badge,.scope-warning{display:inline-block;border-radius:5px;padding:2px 7px;font-size:13px;font-weight:650}
+.scope-badge{color:#344054;background:#eef2f6;border:1px solid #ccd5e0}
+.risk-low{color:#087443;background:#eaf8f0}.risk-medium{color:#805900;background:#fff4cc}.risk-high{color:#a34400;background:#fff0de}.risk-very-high{color:#b42318;background:#ffebe8}
+.critical-title,.critical-title:visited,.critical-alert{color:#b42318!important;font-weight:750}
+.critical-alert{display:block;font-size:13px}
+.scope-warning{color:#8a4000;background:#ffebc6}
+.delta{color:#344054}.risk-reason{font-size:14px;color:#475467;margin:10px 14px}
+.risk-detail{padding:8px 14px;background:#f8fafc;font-size:14px}.risk-detail .matrix-section{margin:8px 0;padding:8px;border:0}
+.risk-detail table{font-size:13px;min-width:760px}.risk-detail h2{font-size:16px;margin:8px 0}
+.jump-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.jump-nav a{padding:6px 9px;border:1px solid #c0cde0;border-radius:6px;background:#fff;font-size:14px;text-decoration:none}
+.snapshot-details,.risk-method{margin:18px 0;padding:14px;background:#fff;border:1px solid var(--line);border-radius:8px}
+.snapshot-details>summary,.risk-method>summary{font-weight:650}.compact-overview{font-size:17px}
+.review-toolbar{margin:18px 0}.commit-section,.file-group,.file-item,.file-content{min-width:0}
+.change-relation,.change-step{min-width:0}.change-relation{margin:22px 0;padding:16px;border:1px solid var(--line);border-left:4px solid #416fb2;border-radius:8px}.change-relation>h3{font-size:21px}.change-kind{display:inline-block;padding:2px 8px;margin-right:8px;border:1px solid #b8c9e0;border-radius:5px;background:#edf3fc;color:#244c80;font-size:14px}.change-step{margin-top:20px;padding-top:12px;border-top:1px solid var(--line)}.change-step>h4{font-size:17px;overflow-wrap:anywhere}.relation-status{font-weight:550}.relation-origin{color:#52627a}
+.commit-section>h2{font-size:22px}.follow-up{border-left:3px solid #8198ba;background:#f1f5fb;padding:9px 13px;font-size:14px}
+.change-relation>h3{position:sticky;top:0;z-index:9;background:#fff;padding:10px 0;margin-top:0;box-shadow:0 3px 9px #17203312;overflow-wrap:anywhere}
+.file-item [id]{scroll-margin-top:calc(var(--file-header-height,180px) + var(--relation-header-height,0px))}
+#focus-review,.inline-evidence,.issue-evidence{min-width:0;overflow-wrap:anywhere}
+.inline-evidence figure,#focus-review figure,.issue-evidence figure{max-width:100%;margin:12px 0;overflow-x:auto}
+.inline-evidence img,#focus-review img,.issue-evidence img{display:block;max-width:100%;height:auto}
+.inline-evidence figcaption,#focus-review figcaption,.issue-evidence figcaption{font-size:14px;color:#475467;overflow-wrap:anywhere}
+.inline-evidence pre,#focus-review pre{max-width:100%;overflow:auto;white-space:pre}
+.hunk-review>.risk-detail{border-top:1px solid var(--line)}
+.diff-code{max-width:100%}.hunk-title{font-size:17px}
+.proof{padding:14px;border:1px solid var(--line);border-radius:8px;margin:14px 0}.proof pre{overflow:auto;background:#142038;color:#e2eaf9;padding:12px}.proof pre span{white-space:pre}.proof .line,.proof .focus{display:block}.proof .focus{background:#334765;border-left:3px solid #fbc558}.proof .ln{display:inline-block;width:4em;color:#afc4e8}.issue-evidence{margin-top:16px}
+@media(max-width:720px){.compact-overview{font-size:14px}.file-summary{padding:10px 8px}.file-metrics{font-size:12px;gap:4px 8px}.scope-badge,.risk-badge,.scope-warning{font-size:12px}.critical-alert{font-size:12px}.commit-section{padding:14px 8px}.file-list{padding-left:18px}.file-content{padding:0 7px 12px}.risk-detail{padding:7px}.hunk-title{font-size:15px}}
